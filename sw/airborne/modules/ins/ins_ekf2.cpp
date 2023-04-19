@@ -44,9 +44,9 @@
 #include <stdio.h>
 #endif
 
-/** Prevent setting INS reference from flight plan */
-#if USE_INS_NAV_INIT
-#error INS initialization from flight plan is not yet supported
+/** INS reference from flight plan, true by default */
+#ifndef USE_INS_NAV_INIT
+#define USE_INS_NAV_INIT TRUE
 #endif
 
 /** Special configuration for Optitrack */
@@ -56,9 +56,6 @@
 #endif
 #ifndef INS_EKF2_VDIST_SENSOR_TYPE
 #define INS_EKF2_VDIST_SENSOR_TYPE VDIST_SENSOR_EV
-#endif
-#ifndef USE_INS_NAV_INIT
-#define USE_INS_NAV_INIT true
 #endif
 #endif
 
@@ -728,7 +725,7 @@ static void ins_ekf2_publish_attitude(uint32_t stamp)
 #endif
       guidance_h.sp.heading += psi;
       guidance_h.rc_sp.psi += psi;
-      nav_heading += ANGLE_BFP_OF_REAL(psi);
+      nav.heading += psi;
       guidance_h_read_rc(autopilot_in_flight());
       stabilization_attitude_enter();
       ekf2.quat_reset_counter = quat_reset_counter;

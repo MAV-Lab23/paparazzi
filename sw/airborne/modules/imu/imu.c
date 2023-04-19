@@ -39,7 +39,10 @@
 #define IMU_INTEGRATION false
 #endif
 
-/** By default gyro signs are positive for single IMU with old format */
+/** By default gyro signs are positive for single IMU with old format or defaults */
+#if defined(IMU_GYRO_CALIB) && (defined(IMU_GYRO_P_SIGN) || defined(IMU_GYRO_Q_SIGN) || defined(IMU_GYRO_R_SIGN))
+#warning "The IMU_GYRO_?_SIGN's aren't compatible with the IMU_GYRO_CALIB define in the airframe"
+#endif
 #ifndef IMU_GYRO_P_SIGN
 #define IMU_GYRO_P_SIGN 1
 #endif
@@ -71,7 +74,10 @@ PRINT_CONFIG_MSG("Using single IMU gyro sensitivity calibration")
 #define IMU_GYRO_CALIB {}
 #endif
 
-/** By default accel signs are positive for single IMU with old format */
+/** By default accel signs are positive for single IMU with old format and defaults */
+#if defined(IMU_ACCEL_CALIB) && (defined(IMU_ACCEL_X_SIGN) || defined(IMU_ACCEL_Y_SIGN) || defined(IMU_ACCEL_Z_SIGN))
+#warning "The IMU_ACCEL_?_SIGN's aren't compatible with the IMU_ACCEL_CALIB define in the airframe"
+#endif
 #ifndef IMU_ACCEL_X_SIGN
 #define IMU_ACCEL_X_SIGN 1
 #endif
@@ -103,7 +109,10 @@ PRINT_CONFIG_MSG("Using single IMU accel sensitivity calibration")
 #define IMU_ACCEL_CALIB {}
 #endif
 
-/** By default mag signs are positive for single IMU with old format */
+/** By default mag signs are positive for single IMU with old format and defaults */
+#if defined(IMU_MAG_CALIB) && (defined(IMU_MAG_X_SIGN) || defined(IMU_MAG_Y_SIGN) || defined(IMU_MAG_Z_SIGN))
+#warning "The IMU_MAG_?_SIGN's aren't compatible with the IMU_MAG_CALIB define in the airframe"
+#endif
 #ifndef IMU_MAG_X_SIGN
 #define IMU_MAG_X_SIGN 1
 #endif
@@ -153,7 +162,7 @@ PRINT_CONFIG_VAR(IMU_BODY_TO_IMU_PSI)
 static void send_accel_raw(struct transport_tx *trans, struct link_device *dev)
 {
   static uint8_t id = 0;
-  pprz_msg_send_IMU_ACCEL_RAW(trans, dev, AC_ID, &imu.accels[id].abi_id,
+  pprz_msg_send_IMU_ACCEL_RAW(trans, dev, AC_ID, &imu.accels[id].abi_id, &imu.accels[id].temperature,
                               &imu.accels[id].unscaled.x, &imu.accels[id].unscaled.y, &imu.accels[id].unscaled.z);
   id++;
   if(id >= IMU_MAX_SENSORS || imu.accels[id].abi_id == ABI_DISABLE)
@@ -185,7 +194,7 @@ static void send_accel(struct transport_tx *trans, struct link_device *dev)
 static void send_gyro_raw(struct transport_tx *trans, struct link_device *dev)
 {
   static uint8_t id = 0;
-  pprz_msg_send_IMU_GYRO_RAW(trans, dev, AC_ID, &imu.gyros[id].abi_id,
+  pprz_msg_send_IMU_GYRO_RAW(trans, dev, AC_ID, &imu.gyros[id].abi_id, &imu.gyros[id].temperature,
                              &imu.gyros[id].unscaled.p, &imu.gyros[id].unscaled.q, &imu.gyros[id].unscaled.r);
   id++;
   if(id >= IMU_MAX_SENSORS || imu.gyros[id].abi_id == ABI_DISABLE)
@@ -264,8 +273,8 @@ static void send_mag_current(struct transport_tx *trans, struct link_device *dev
 
 struct Imu imu = {0};
 static abi_event imu_gyro_raw_ev, imu_accel_raw_ev, imu_mag_raw_ev;
-static void imu_gyro_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Rates *data, uint8_t samples);
-static void imu_accel_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Vect3 *data, uint8_t samples);
+static void imu_gyro_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Rates *data, uint8_t samples, float temp);
+static void imu_accel_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Vect3 *data, uint8_t samples, float temp);
 static void imu_mag_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Vect3 *data);
 static void imu_set_body_to_imu_eulers(struct FloatEulers *body_to_imu_eulers);
 
@@ -303,7 +312,7 @@ void imu_init(void)
       INT_RATES_ZERO(imu.gyros[i].neutral);
     }
     if(!imu.gyros[i].calibrated.scale) {
-      RATES_ASSIGN(imu.gyros[i].scale[0], 1, 1, 1);
+      RATES_ASSIGN(imu.gyros[i].scale[0], IMU_GYRO_P_SIGN, IMU_GYRO_Q_SIGN, IMU_GYRO_R_SIGN);
       RATES_ASSIGN(imu.gyros[i].scale[1], 1, 1, 1);
     }
     if(!imu.gyros[i].calibrated.rotation) {
@@ -329,7 +338,7 @@ void imu_init(void)
       INT_VECT3_ZERO(imu.accels[i].neutral);
     }
     if(!imu.accels[i].calibrated.scale) {
-      VECT3_ASSIGN(imu.accels[i].scale[0], 1, 1, 1);
+      VECT3_ASSIGN(imu.accels[i].scale[0], IMU_ACCEL_X_SIGN, IMU_ACCEL_Y_SIGN, IMU_ACCEL_Z_SIGN);
       VECT3_ASSIGN(imu.accels[i].scale[1], 1, 1, 1);
     }
     if(!imu.accels[i].calibrated.rotation) {
@@ -356,7 +365,7 @@ void imu_init(void)
       INT_VECT3_ZERO(imu.mags[i].neutral);
     }
     if(!imu.mags[i].calibrated.scale) {
-      VECT3_ASSIGN(imu.mags[i].scale[0], 1, 1, 1);
+      VECT3_ASSIGN(imu.mags[i].scale[0], IMU_MAG_X_SIGN, IMU_MAG_Y_SIGN, IMU_MAG_Z_SIGN);
       VECT3_ASSIGN(imu.mags[i].scale[1], 1, 1, 1);
     }
     if(!imu.mags[i].calibrated.rotation) {
@@ -415,7 +424,7 @@ void imu_set_defaults_gyro(uint8_t abi_id, const struct Int32RMat *imu_to_sensor
   if(neutral != NULL && !gyro->calibrated.neutral)
     RATES_COPY(gyro->neutral, *neutral);
   if(scale != NULL && !gyro->calibrated.scale) {
-    RATES_COPY(gyro->scale[0], scale[0]);
+    RATES_ASSIGN(gyro->scale[0], IMU_GYRO_P_SIGN*scale[0].p, IMU_GYRO_Q_SIGN*scale[0].q, IMU_GYRO_R_SIGN*scale[0].r);
     RATES_COPY(gyro->scale[1], scale[1]);
   }
 }
@@ -445,7 +454,7 @@ void imu_set_defaults_accel(uint8_t abi_id, const struct Int32RMat *imu_to_senso
   if(neutral != NULL && !accel->calibrated.neutral)
     VECT3_COPY(accel->neutral, *neutral);
   if(scale != NULL && !accel->calibrated.scale) {
-    VECT3_COPY(accel->scale[0], scale[0]);
+    VECT3_ASSIGN(accel->scale[0], IMU_ACCEL_X_SIGN*scale[0].x, IMU_ACCEL_Y_SIGN*scale[0].y, IMU_ACCEL_Z_SIGN*scale[0].z);
     VECT3_COPY(accel->scale[1], scale[1]);
   }
 }
@@ -475,12 +484,12 @@ void imu_set_defaults_mag(uint8_t abi_id, const struct Int32RMat *imu_to_sensor,
   if(neutral != NULL && !mag->calibrated.neutral)
     VECT3_COPY(mag->neutral, *neutral);
   if(scale != NULL && !mag->calibrated.scale) {
-    VECT3_COPY(mag->scale[0], scale[0]);
+    VECT3_ASSIGN(mag->scale[0], IMU_MAG_X_SIGN*scale[0].x, IMU_MAG_Y_SIGN*scale[0].y, IMU_MAG_Z_SIGN*scale[0].z);
     VECT3_COPY(mag->scale[1], scale[1]);
   }
 }
 
-static void imu_gyro_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Rates *data, uint8_t samples)
+static void imu_gyro_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Rates *data, uint8_t samples, float temp)
 {
   // Find the correct gyro
   struct imu_gyro_t *gyro = imu_get_gyro(sender_id, true);
@@ -540,12 +549,13 @@ static void imu_gyro_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Rates
 #endif
 
   // Copy and send
+  gyro->temperature = temp;
   RATES_COPY(gyro->scaled, scaled_rot);
   AbiSendMsgIMU_GYRO(sender_id, stamp, &gyro->scaled);
   gyro->last_stamp = stamp;
 }
 
-static void imu_accel_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Vect3 *data, uint8_t samples)
+static void imu_accel_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Vect3 *data, uint8_t samples, float temp)
 {
   // Find the correct accel
   struct imu_accel_t *accel = imu_get_accel(sender_id, true);
@@ -605,6 +615,7 @@ static void imu_accel_raw_cb(uint8_t sender_id, uint32_t stamp, struct Int32Vect
 #endif
 
   // Copy and send
+  accel->temperature = temp;
   VECT3_COPY(accel->scaled, scaled_rot);
   AbiSendMsgIMU_ACCEL(sender_id, stamp, &accel->scaled);
   accel->last_stamp = stamp;

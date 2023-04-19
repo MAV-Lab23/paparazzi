@@ -217,6 +217,10 @@
 #define MAG_DATALINK_SENDER_ID 6
 #endif
 
+#ifndef MAG_QMC5883L_SENDER_ID
+#define MAG_QMC5883L_SENDER_ID 7
+#endif
+
 #ifndef IMU_MAG_PITOT_ID
 #define IMU_MAG_PITOT_ID 50
 #endif
@@ -382,6 +386,13 @@
 // prefiltering with OneEuro filter
 #ifndef IMU_F1E_ID
 #define IMU_F1E_ID 30
+#endif
+
+/*
+ * ID for AHRS aligner
+ */
+#ifndef AHRS_ALIGNER_ID
+#define AHRS_ALIGNER_ID 1
 #endif
 
 /*
@@ -593,21 +604,28 @@
 #define RADIO_CONTROL_INTERMCU_ID 9
 #endif
 
+/*
+ * IDs of VEL_SP senders
+ */
+
+#ifndef VEL_SP_FCR_ID
+#define VEL_SP_FCR_ID 1 // Approach Moving Target
+#endif
+
 #ifndef AM7_DATA_OUT_ID
-#define AM7_DATA_OUT_ID 36
+#define AM7_DATA_OUT_ID 37
 #endif
 
 #ifndef AM7_DATA_IN_ID
-#define AM7_DATA_IN_ID 37
+#define AM7_DATA_IN_ID 38
 #endif
 
 #ifndef SERIAL_ACT_T4_OUT_ID
-#define SERIAL_ACT_T4_OUT_ID 38
+#define SERIAL_ACT_T4_OUT_ID 39
 #endif
 
 #ifndef SERIAL_ACT_T4_IN_ID
-#define SERIAL_ACT_T4_IN_ID 39
+#define SERIAL_ACT_T4_IN_ID 40
 #endif
-
 
 #endif /* ABI_SENDER_IDS_H */

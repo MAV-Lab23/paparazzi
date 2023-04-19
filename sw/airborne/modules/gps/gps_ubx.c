@@ -86,6 +86,7 @@ extern struct RtcmMan rtcm_man;
 #ifndef INJECT_BUFF_SIZE
 #define INJECT_BUFF_SIZE 1024 + 6
 #endif
+
 /* RTCM control struct type */
 struct rtcm_t {
   uint32_t nbyte;                     ///< number of bytes in message buffer
@@ -94,6 +95,10 @@ struct rtcm_t {
 };
 struct rtcm_t rtcm = { 0 };
 
+#endif
+
+#ifndef GPS_UBX_BOOTRESET
+#define GPS_UBX_BOOTRESET 0
 #endif
 
 void gps_ubx_init(void)
@@ -105,6 +110,8 @@ void gps_ubx_init(void)
   gps_ubx.pacc_valid = false;
 
   gps_ubx.state.comp_id = GPS_UBX_ID;
+
+  gps_ubx.reset = GPS_UBX_BOOTRESET;
 }
 
 void gps_ubx_event(void)
@@ -116,6 +123,16 @@ void gps_ubx_event(void)
     if (gps_ubx.msg_available) {
       gps_ubx_msg();
     }
+  }
+
+  if (gps_ubx.reset > 0) {    
+    switch (gps_ubx.reset) {
+      case 1 : ubx_send_cfg_rst(&(UBX_GPS_LINK).device, CFG_RST_BBR_Hotstart, CFG_RST_Reset_Controlled); break;
+      case 2 : ubx_send_cfg_rst(&(UBX_GPS_LINK).device, CFG_RST_BBR_Warmstart, CFG_RST_Reset_Controlled); break;
+      case 3 : ubx_send_cfg_rst(&(UBX_GPS_LINK).device, CFG_RST_BBR_Coldstart, CFG_RST_Reset_Controlled); break;
+      default: DEBUG_PRINT("Unknown reset id: %i", gps_ubx.reset); break;
+    }
+    gps_ubx.reset = 0;
   }
 }
 
@@ -167,17 +184,13 @@ static void gps_ubx_parse_nav_pvt(void)
   gps_ubx.state.lla_pos.alt = UBX_NAV_PVT_height(gps_ubx.msg_buf);
   SetBit(gps_ubx.state.valid_fields, GPS_VALID_POS_LLA_BIT);
 
-  // Copy heading if valid
-  uint8_t headVehValid      = bit_is_set(flags, 5);
-  if (headVehValid) {
-    // Ublox gives I4 heading in 1e-5 degrees, apparenty from 0 to 360 degrees (not -180 to 180)
-    // I4 max = 2^31 = 214 * 1e5 * 100 < 360 * 1e7: overflow on angles over 214 deg -> casted to -214 deg
-    // solution: First to radians, and then scale to 1e-7 radians
-    // First x 10 for loosing less resolution, then to radians, then multiply x 10 again
-    gps_ubx.state.course    = (RadOfDeg(UBX_NAV_PVT_headMot(gps_ubx.msg_buf) * 10)) * 10;
-    SetBit(gps_ubx.state.valid_fields, GPS_VALID_COURSE_BIT);
-    gps_ubx.state.cacc      = (RadOfDeg(UBX_NAV_PVT_headAcc(gps_ubx.msg_buf) * 10)) * 10;
-  }
+  // Ublox gives I4 heading in 1e-5 degrees, apparenty from 0 to 360 degrees (not -180 to 180)
+  // I4 max = 2^31 = 214 * 1e5 * 100 < 360 * 1e7: overflow on angles over 214 deg -> casted to -214 deg
+  // solution: First to radians, and then scale to 1e-7 radians
+  // First x 10 for loosing less resolution, then to radians, then multiply x 10 again
+  gps_ubx.state.course    = (RadOfDeg(UBX_NAV_PVT_headMot(gps_ubx.msg_buf) * 10)) * 10;
+  SetBit(gps_ubx.state.valid_fields, GPS_VALID_COURSE_BIT);
+  gps_ubx.state.cacc      = (RadOfDeg(UBX_NAV_PVT_headAcc(gps_ubx.msg_buf) * 10)) * 10;
 
   // Copy HMSL and ground speed
   gps_ubx.state.hmsl        = UBX_NAV_PVT_hMSL(gps_ubx.msg_buf);
