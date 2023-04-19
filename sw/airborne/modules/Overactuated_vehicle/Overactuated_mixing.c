@@ -51,6 +51,8 @@
 
 #define FLY_WITH_AIRSPEED
 
+#define NEW_AOA_DEFINITION 
+
 #define FBW_ACTUATORS
 #define MAX_DSHOT_VALUE 1999.0
 #define RPM_CONTROL
@@ -489,7 +491,7 @@ float compute_yaw_rate_turn(void){
             //Compute the yaw rate for the coordinate turn:
         float yaw_rate_setpoint_turn = 0;
 
-        float airspeed_turn = airspeed;
+        float airspeed_turn = airspeed_filt.o[0];
         //We are dividing by the airspeed, so a lower bound is important
         Bound(airspeed_turn,10.0,30.0);
 
@@ -969,17 +971,6 @@ void assign_variables(void){
     beta_deg = - aoa_pwm.angle * 180/M_PI;
     beta_rad = beta_deg * M_PI / 180;
 
-    total_V = sqrt(speed_vect[0]*speed_vect[0] + speed_vect[1]*speed_vect[1] + speed_vect[2]*speed_vect[2]);
-    if(total_V > 5){
-        flight_path_angle = asin(-speed_vect[2]/total_V);
-        BoundAbs(flight_path_angle, M_PI/2);
-    }
-    else{
-        flight_path_angle = 0;
-    }
-
-
-    //Determine the acceleration set in the body reference frame with gravity:
 
     /* Propagate the filter on the gyroscopes and accelerometers */
     for (int i = 0; i < 3; i++) {
@@ -1013,7 +1004,26 @@ void assign_variables(void){
     //Determination of the accelerations in the control rf:
     from_earth_to_control( accel_vect_control_rf, acc_vect, euler_vect[2]);
     from_earth_to_control( accel_vect_filt_control_rf, acc_vect_filt, euler_vect[2]);
+    //Determination of the speed in the control rf:
     from_earth_to_control( speed_vect_control_rf, speed_vect, euler_vect[2]);
+
+    //Definition of AoA and FPA 
+    #ifdef NEW_AOA_DEFINITION
+    float projected_airspeed_on_x_control = 0.0;
+    if(fabs(cosf(euler_vect[1])) > 0.001){
+        projected_airspeed_on_x_control = airspeed/cosf(euler_vect[1]);
+    }
+    total_V = sqrt(projected_airspeed_on_x_control*projected_airspeed_on_x_control + speed_vect_control_rf[1]*speed_vect_control_rf[1] + speed_vect_control_rf[2]*speed_vect_control_rf[2]);
+    #else
+    total_V = sqrt(speed_vect[0]*speed_vect[0] + speed_vect[1]*speed_vect[1] + speed_vect[2]*speed_vect[2]);
+    #endif
+
+    flight_path_angle = 0.0;
+    if(total_V > 1.0){
+        flight_path_angle = asin(-speed_vect[2]/total_V);
+        BoundAbs(flight_path_angle, M_PI/2);
+    }
+
 }
 
 /**

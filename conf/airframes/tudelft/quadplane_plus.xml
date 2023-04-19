@@ -637,7 +637,7 @@
     <define name="MAX_POS_XY_ERROR" value="15" unit="meters"/>
     <define name="MAX_POS_Z_ERROR" value="5" unit="meters"/>
 
-    <define name="VX_CONTROL_STATIC_GAIN" value="10" unit="(m/s)/m"/>
+    <define name="VX_CONTROL_STATIC_GAIN" value="1" unit="(m/s)/m"/>
     <define name="VY_CONTROL_STATIC_GAIN" value="1" unit="(m/s)/m"/>
     <define name="VZ_CONTROL_STATIC_GAIN" value="1" unit="(m/s)/m"/>
 
