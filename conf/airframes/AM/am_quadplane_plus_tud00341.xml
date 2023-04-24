@@ -462,15 +462,15 @@
     <define name="SERVO_EL_MAX_ANGLE" value="22" unit="deg"/>
     <define name="SERVO_EL_MIN_ANGLE" value="-130" unit="deg"/>
 
-    <define name="SERVO_EL_1_ZERO_VALUE" value="-0.52" unit="deg"/>
-    <define name="SERVO_EL_2_ZERO_VALUE" value="3.8" unit="deg"/>
-    <define name="SERVO_EL_3_ZERO_VALUE" value="4.3" unit="deg"/>
-    <define name="SERVO_EL_4_ZERO_VALUE" value="-4.04" unit="deg"/>
+    <define name="SERVO_EL_1_ZERO_VALUE" value="0.8" unit="deg"/>
+    <define name="SERVO_EL_2_ZERO_VALUE" value="-2.9" unit="deg"/>
+    <define name="SERVO_EL_3_ZERO_VALUE" value="1.14" unit="deg"/>
+    <define name="SERVO_EL_4_ZERO_VALUE" value="-5.62" unit="deg"/>
 
-    <define name="SERVO_AZ_1_ZERO_VALUE" value="-1.13" unit="deg"/>
-    <define name="SERVO_AZ_2_ZERO_VALUE" value="0" unit="deg"/>
-    <define name="SERVO_AZ_3_ZERO_VALUE" value="-2.36" unit="deg"/>
-    <define name="SERVO_AZ_4_ZERO_VALUE" value="0" unit="deg"/>
+    <define name="SERVO_AZ_1_ZERO_VALUE" value="1.84" unit="deg"/>
+    <define name="SERVO_AZ_2_ZERO_VALUE" value="4.92" unit="deg"/>
+    <define name="SERVO_AZ_3_ZERO_VALUE" value="-7.29" unit="deg"/>
+    <define name="SERVO_AZ_4_ZERO_VALUE" value="2.98" unit="deg"/>
 
     <define name="MAX_THETA_INDI" value="60" unit="deg"/>
     <define name="MIN_THETA_INDI" value="-15" unit="deg"/>
@@ -731,7 +731,10 @@
     <!-- <define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={11,-37,-133}, .scale={{36440,14620,6911},{62271,25223,11910}}}}"/> -->
 
     <!-- valkenburg rm3100 15-03-2023 -->
-    <define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={60,-40,-72}, .scale={{26092,14481,16001},{45931,25202,28757}}}}"/>
+    <!--define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={60,-40,-72}, .scale={{26092,14481,16001},{45931,25202,28757}}}}"/-->
+
+    <!-- valkeburg both 21-04-2023 -->
+    <define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={17,-52,-80}, .scale={{2843,11261,31619},{4991,19705,56656}}}, {.abi_id=4, .calibrated={.neutral=true, .scale=true},.neutral={-34,-19,17}, .scale={{42982,27007,27607},{3329,2125,2169}}}}"/>
 
     <!-- Define axis in hover frame -->
     <define name="BODY_TO_IMU_PHI" value="0" unit="deg"/>

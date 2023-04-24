@@ -159,10 +159,10 @@
       <define name="MODULE_IST8310_UPDATE_AHRS" value="TRUE"/>
       <configure name="MAG_IST8310_I2C_DEV" value="I2C3"/>
       <define name="IST8310_CHAN_X_SIGN" value="+"/>
-      <define name="IST8310_CHAN_Y_SIGN" value="+"/>
-      <define name="IST8310_CHAN_Z_SIGN" value="-"/>
-      <define name="IST8310_CHAN_X" value="0"/>
-      <define name="IST8310_CHAN_Y" value="1"/>
+      <define name="IST8310_CHAN_Y_SIGN" value="-"/>
+      <define name="IST8310_CHAN_Z_SIGN" value="+"/>
+      <define name="IST8310_CHAN_X" value="1"/>
+      <define name="IST8310_CHAN_Y" value="0"/>
       <define name="IST8310_CHAN_Z" value="2"/> 
     </module>
 
@@ -269,11 +269,13 @@
 
   <!-- Maximum limits of the vehicle in manual speed control mode. limits are in the control rf -->
   <section name="FWD_LIMITS" prefix="LIMITS_FWD_">
-    <define name="MAX_FWD_SPEED" value="15.0" unit="m/s"/>
+    <define name="MAX_FWD_SPEED" value="25.0" unit="m/s"/>
+    <define name="MAX_AIRSPEED" value="15.0" unit="m/s"/> <!--updated for WP navigation-->
     <define name="MIN_FWD_SPEED" value="-4.0" unit="m/s"/>
     <define name="MAX_LAT_SPEED" value="8.0" unit="m/s"/>
     <define name="MAX_VERT_SPEED" value="3.0" unit="m/s"/>
     <define name="MAX_FWD_ACC" value="4.0" unit="m/s^2"/>
+    <define name="MIN_FWD_ACC" value="-2.5" unit="m/s^2"/> <!--updated for WP navigation-->
     <define name="MAX_LAT_ACC" value="6.0" unit="m/s^2"/>
     <define name="MAX_VERT_ACC" value="5.0" unit="m/s^2"/>
   </section>
@@ -286,16 +288,16 @@
     <define name="AILERONS_FIRST_ORD_NUM" value="0.0198" />
     <define name="AILERONS_FIRST_ORD_DEN" value="-0.9802" />
 
-    <define name="SERVO_9_MIN_PWM" value="2246" />   
-    <define name="SERVO_9_MAX_PWM" value="843" />   
-    <define name="SERVO_9_NEUTRAL_PWM" value="1406" /> 
+    <define name="SERVO_9_MIN_PWM" value="2200" />   
+    <define name="SERVO_9_MAX_PWM" value="800" />   
+    <define name="SERVO_9_NEUTRAL_PWM" value="1500" /> 
     <define name="SERVO_9_MIN_ANGLE_DEG" value="-25" /> 
     <define name="SERVO_9_MAX_ANGLE_DEG" value="25" /> 
     <define name="SERVO_9_DELAY_TS" value="5" /> 
 
-    <define name="SERVO_10_MIN_PWM" value="2217" />   
-    <define name="SERVO_10_MAX_PWM" value="850" />   
-    <define name="SERVO_10_NEUTRAL_PWM" value="1589" /> 
+    <define name="SERVO_10_MIN_PWM" value="2200" />   
+    <define name="SERVO_10_MAX_PWM" value="800" />   
+    <define name="SERVO_10_NEUTRAL_PWM" value="1500" /> 
     <define name="SERVO_10_MIN_ANGLE_DEG" value="-25" /> 
     <define name="SERVO_10_MAX_ANGLE_DEG" value="25" /> 
     <define name="SERVO_10_DELAY_TS" value="5" /> 
@@ -496,8 +498,9 @@
 
     <!-- First order filter on rates -->
     <!-- 1-exp(-cutoff_frequency/sampling_frequency) [20 rad/s]-->
-    <!-- <define name="FIRST_ORDER_FILTER_COEFF_ANG_RATES" value="0.0488" />  -->
-    <define name="FIRST_ORDER_FILTER_COEFF_ANG_RATES" value="0.0952" />  <!--Modified to accommodate the 250 Hz refresh rate-->
+    <define name="FIRST_ORDER_FILTER_COEFF_ANG_RATES" value="0.0488" /> 
+    <!--Modified to accommodate the 250 Hz refresh rate-->
+    <!-- <define name="FIRST_ORDER_FILTER_COEFF_ANG_RATES" value="0.0952" />   -->
 
     <!-- Weighting matrix for the INDI -->
     <define name="W_ACT_MOTOR_CONST" value="3"/>
@@ -507,9 +510,9 @@
     <define name="W_ACT_AZ_CONST" value="0"/>
     <define name="W_ACT_AZ_SPEED" value="2"/>
     <define name="W_ACT_THETA_CONST" value="100"/>
-    <define name="W_ACT_THETA_SPEED" value="-12"/>
+    <define name="W_ACT_THETA_SPEED" value="-15"/>
     <define name="W_ACT_PHI_CONST" value="100"/>
-    <define name="W_ACT_PHI_SPEED" value="-13"/>
+    <define name="W_ACT_PHI_SPEED" value="-15"/>
 
     <define name="W_ACT_AILERONS_CONST" value="0.5"/>
     <define name="W_ACT_AILERONS_SPEED" value="0"/>
@@ -524,12 +527,12 @@
 
     <define name="GAMMA_QUADRATIC_DU" value="0.6e-5"/> -->
 
-    <define name="W_DV_1" value="0.05"/>
-    <define name="W_DV_2" value="0.05"/>
-    <define name="W_DV_3" value="0.01"/>
-    <define name="W_DV_4" value="0.15"/>
-    <define name="W_DV_5" value="0.15"/>
-    <define name="W_DV_6" value="0.15"/>
+    <define name="W_DV_1" value="0.03"/>
+    <define name="W_DV_2" value="0.03"/>
+    <define name="W_DV_3" value="0.06"/>
+    <define name="W_DV_4" value="0.09"/>
+    <define name="W_DV_5" value="0.09"/>
+    <define name="W_DV_6" value="0.09"/>
 
     <define name="GAMMA_QUADRATIC_DU" value="0.5e-5"/>
 
@@ -544,8 +547,10 @@
     <define name="K_I_RAD_S_DSHOT" value="0.01" />
     <define name="K_D_RAD_S_DSHOT" value="1" />
 
-    
-    <define name="FILT_FIRST_ORDER_RPM_COEFF" value="0.1131" /><!-- 1-exp(-cutoff_frequency/sampling_frequency) [60rad/s]--> 
+    <!-- 1-exp(-cutoff_frequency/sampling_frequency) [60rad/s]--> 
+    <define name="FILT_FIRST_ORDER_RPM_COEFF" value="0.1131" />
+    <!--Modified to accommodate the 250 Hz refresh rate-->
+    <!-- <define name="FILT_FIRST_ORDER_RPM_COEFF" value="0.2134" />  -->
 
     <!-- 9x5 CF propeller MULTISTAR-->
     <!-- <define name="K_INDI_RAD_S_DSHOT" value="6.5" /> -->
@@ -564,9 +569,6 @@
     <!-- <define name="MOTOR_DYN_COEFF" value="0.039211" /> -->
     <!-- <define name="MOTOR_DYN_DELAY_TS" value="3" />  -->
     <!-- <define name="MAX_OMEGA_RAD_S" value="1050" />  -->
-
-
-
   </section>
 
   <!-- Vehicle properties, see documentation for notation -->
@@ -580,7 +582,7 @@
     <define name="L1" value="0.228" unit="m"/>
     <define name="L2" value="0.228" unit="m"/>
     <define name="L3" value="0.37" unit="m"/>
-    <define name="L4" value="0.38" unit="m"/>
+    <define name="L4" value="0.41" unit="m"/>
     <define name="LZ" value="0." unit="m"/>
 
     <define name="CL_ALPHA" value="3.5"/>
@@ -641,16 +643,16 @@
 
   <section name="WP_CONTROL" prefix="WP_CONTROL_">
 
-    <define name="MAX_POS_XY_ERROR" value="7.5" unit="meters"/>
+    <define name="MAX_POS_XY_ERROR" value="15" unit="meters"/>
     <define name="MAX_POS_Z_ERROR" value="5" unit="meters"/>
 
-    <define name="VX_CONTROL_STATIC_GAIN" value="0.5" unit="(m/s)/m"/>
-    <define name="VY_CONTROL_STATIC_GAIN" value="0.5" unit="(m/s)/m"/>
+    <define name="VX_CONTROL_STATIC_GAIN" value="1" unit="(m/s)/m"/>
+    <define name="VY_CONTROL_STATIC_GAIN" value="1" unit="(m/s)/m"/>
     <define name="VZ_CONTROL_STATIC_GAIN" value="1" unit="(m/s)/m"/>
 
     <define name="MAX_DECEL_WP_APPROACH" value="2" unit="m/s^2"/>
 
-    <define name="VY_AIRSPEED_GAIN_COEFF" value="-0.1"/>
+    <define name="VY_AIRSPEED_GAIN_COEFF" value="0.0"/>
     <define name="VY_GAIN_MAX_VAL" value="1"/>
     <define name="VY_GAIN_MIN_VAL" value="0.17"/>
 
@@ -741,6 +743,11 @@
 
     <!-- valkenburg rm3100 15-03-2023 -->
     <define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={60,-40,-72}, .scale={{26092,14481,16001},{45931,25202,28757}}}}"/>
+
+    <!-- both rm3100 (5) && internal (4) cyberzoo 22-04-2023 -->
+    <!-- <define name="MAG_CALIB" value="{{.abi_id=4, .calibrated={.neutral=true, .scale=true},.neutral={10,-4,-37}, .scale={{55685,39239,18911},{4384,2665,1691}}}, {.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={492,58,-183}, .scale={{32221,1888,7241},{52637,3277,11818}}} }"/> -->
+
+    <!-- <define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={132,74,36}, .scale={{26749,26366,28605},{44708,44287,50143}}} , {.abi_id=4, .calibrated={.neutral=true, .scale=true},.neutral={6,-32,-31}, .scale={{9832,47397,49775},{753,3595,4018}}}}"/> -->
 
     <!-- Define axis in hover frame -->
     <define name="BODY_TO_IMU_PHI" value="0" unit="deg"/>
