@@ -118,7 +118,7 @@
     <file name="Overactuated_mixing.h"/>
   </header>
   <init fun="overactuated_mixing_init()"/>
-   <periodic fun="overactuated_mixing_run()" autorun="TRUE" freq="400"/>
+   <periodic fun="overactuated_mixing_run()" autorun="TRUE" freq="500"/>
    
   <makefile>
     <file name="Overactuated_mixing.c"/>
@@ -127,7 +127,7 @@
 <!--    <file name="r8lib_min.c" dir="math/qr_solve"/>-->
     <define name="CA_N_V" value="6" />
     <define name="CA_N_U" value="14" />
-    <define name="PERIODIC_FREQUENCY_OVERACTUATED" value="400" />
+    <define name="PERIODIC_FREQUENCY_OVERACTUATED" value="500" />
   </makefile>
 </module>
 

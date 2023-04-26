@@ -597,14 +597,15 @@
     <define name="KM_REF" value="1.835091e-7" unit="N*m/(rad/s)^2"/>
     <define name="KT_REF" value="1.106465e-5" unit="N/(rad/s)^2"/>
 
-    <define name="MAX_THR_LOSS_REAL" value="4" unit="N"/>
+    <!-- <define name="MAX_THR_LOSS_REAL" value="4" unit="N"/> -->
+    <define name="MAX_THR_LOSS_REAL" value="0" unit="N"/>
 
     <define name="MAX_THR_LOSS_OPTIMIZER" value="0" unit="N"/>
 
     <!-- drag coefficient of the rotor -->
     <define name="C_DR" value="0.005"/>
 
-    <define name="P00_KT" value="1"/>
+    <!-- <define name="P00_KT" value="1"/>
     <define name="P10_KT" value="-0.007944"/>
     <define name="P01_KT" value="-0.01699"/>
     <define name="P20_KT" value="0.000856"/>
@@ -615,7 +616,19 @@
     <define name="P12_KT" value="0.0001334"/>
     <define name="P40_KT" value="-5.416e-06"/>
     <define name="P31_KT" value="-8.903e-05"/>
-    <define name="P22_KT" value="0.0003558"/>
+    <define name="P22_KT" value="0.0003558"/> -->
+    <define name="P00_KT" value="1"/>
+    <define name="P10_KT" value="0"/>
+    <define name="P01_KT" value="0"/>
+    <define name="P20_KT" value="0"/>
+    <define name="P11_KT" value="0"/>
+    <define name="P02_KT" value="0"/>
+    <define name="P30_KT" value="0"/>
+    <define name="P21_KT" value="0"/>
+    <define name="P12_KT" value="0"/>
+    <define name="P40_KT" value="0"/>
+    <define name="P31_KT" value="0"/>
+    <define name="P22_KT" value="0"/>
 
     <define name="P00_QT" value="-0.00568"/>
     <define name="P10_QT" value="-0.008563"/>
