@@ -49,9 +49,11 @@
  * Variables declaration
  */
 
-#define FLY_WITH_AIRSPEED
+// #define FLY_WITH_AIRSPEED
+// #define USE_NEW_THR_ESTIMATION
+// #define NEW_AOA_DEFINITION 
+// #define FILTER_AIRSPEED
 
-#define NEW_AOA_DEFINITION 
 
 #define FBW_ACTUATORS
 #define MAX_DSHOT_VALUE 1999.0
@@ -490,26 +492,31 @@ struct BodyCoord_f compute_propeller_thrust_in_body_frame(float propeller_speed,
 float compute_yaw_rate_turn(void){
             //Compute the yaw rate for the coordinate turn:
         float yaw_rate_setpoint_turn = 0;
-
+        #ifdef FILTER_AIRSPEED
         float airspeed_turn = airspeed_filt.o[0];
+        #else
+        float airspeed_turn = airspeed;
+        #endif
         //We are dividing by the airspeed, so a lower bound is important
         Bound(airspeed_turn,10.0,30.0);
 
         float accel_y_filt_corrected = 0;
 
-        // accel_y_filt_corrected = accely_filt.o[0] 
-        //                         - actuator_state_filt[0]*actuator_state_filt[0]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[8])/VEHICLE_MASS
-        //                         - actuator_state_filt[1]*actuator_state_filt[1]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[9])/VEHICLE_MASS
-        //                         - actuator_state_filt[2]*actuator_state_filt[2]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[10])/VEHICLE_MASS
-        //                         - actuator_state_filt[3]*actuator_state_filt[3]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[11])/VEHICLE_MASS;
-                                
+
+        #if USE_NEW_THR_ESTIMATION                        
         accel_y_filt_corrected = accely_filt.o[0] 
                                 - compute_propeller_thrust_in_body_frame(airspeed_filt.o[0],actuator_state_filt[4],actuator_state_filt[8],actuator_state_filt[0]).y/VEHICLE_MASS
                                 - compute_propeller_thrust_in_body_frame(airspeed_filt.o[0],actuator_state_filt[5],actuator_state_filt[9],actuator_state_filt[1]).y/VEHICLE_MASS
                                 - compute_propeller_thrust_in_body_frame(airspeed_filt.o[0],actuator_state_filt[6],actuator_state_filt[10],actuator_state_filt[2]).y/VEHICLE_MASS
                                 - compute_propeller_thrust_in_body_frame(airspeed_filt.o[0],actuator_state_filt[7],actuator_state_filt[11],actuator_state_filt[3]).y/VEHICLE_MASS;
-
-        // Creating the setpoint using the bank angle and the body acceleration correction for the sideslip:
+        #else                        
+        accel_y_filt_corrected = accely_filt.o[0] 
+                                - actuator_state_filt[0]*actuator_state_filt[0]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[8])/VEHICLE_MASS
+                                - actuator_state_filt[1]*actuator_state_filt[1]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[9])/VEHICLE_MASS
+                                - actuator_state_filt[2]*actuator_state_filt[2]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[10])/VEHICLE_MASS
+                                - actuator_state_filt[3]*actuator_state_filt[3]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[11])/VEHICLE_MASS;
+        #endif
+        
         yaw_rate_setpoint_turn = 9.81*tan(euler_vect[0])/airspeed_turn - K_beta * accel_y_filt_corrected;
 
         feed_fwd_term_yaw = 9.81*tan(euler_vect[0])/airspeed_turn;
@@ -822,7 +829,11 @@ void send_values_to_raspberry_pi(void){
     am7_data_out_local.q_state_int = (int16_t) (measurement_rates_filters[1].o[0] * 1e1 * 180/M_PI);
     am7_data_out_local.r_state_int = (int16_t) (measurement_rates_filters[2].o[0] * 1e1 * 180/M_PI);
 
+    #ifdef FILTER_AIRSPEED
     am7_data_out_local.airspeed_state_int = (int16_t) (airspeed_filt.o[0] * 1e2);
+    #else
+    am7_data_out_local.airspeed_state_int = (int16_t) (airspeed * 1e2);
+    #endif
 
     float fake_beta = 0;
 
@@ -845,7 +856,12 @@ void send_values_to_raspberry_pi(void){
 
     am7_data_out_local.desired_ailerons_value_int = (int16_t) (manual_ailerons_value * 1e2 * 180/M_PI);
 
+    #if USE_NEW_THR_ESTIMATION
     extra_data_out_local[0] = PROP_MODEL_KT_REF;
+    #else
+    extra_data_out_local[0] = Dynamic_MOTOR_K_T_OMEGASQ;
+    #endif
+
     extra_data_out_local[1] = PROP_MODEL_KM_REF;
     extra_data_out_local[2] = VEHICLE_MASS;
     extra_data_out_local[3] = VEHICLE_I_XX;
