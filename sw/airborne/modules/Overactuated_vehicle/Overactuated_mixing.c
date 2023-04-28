@@ -53,7 +53,7 @@
 // #define USE_NEW_THR_ESTIMATION
 // #define NEW_AOA_DEFINITION 
 // #define FILTER_AIRSPEED
-
+// #define NEW_YAWRATE_REFERENCE
 
 #define FBW_ACTUATORS
 #define MAX_DSHOT_VALUE 1999.0
@@ -132,7 +132,7 @@ float desired_angle_servo_9 = 0;
 float desired_angle_servo_10 = 0;
 
 //Sideslip gains
-float K_beta = 0.2;
+float K_beta = 0.15;
 
 float Dynamic_MOTOR_K_T_OMEGASQ;
 
@@ -517,11 +517,18 @@ float compute_yaw_rate_turn(void){
                                 - actuator_state_filt[3]*actuator_state_filt[3]* Dynamic_MOTOR_K_T_OMEGASQ * sin(actuator_state_filt[11])/VEHICLE_MASS;
         #endif
         
-        yaw_rate_setpoint_turn = 9.81*tan(euler_vect[0])/airspeed_turn - K_beta * accel_y_filt_corrected;
+        #ifdef NEW_YAWRATE_REFERENCE
+            yaw_rate_setpoint_turn = 9.81*tan(euler_vect[0])/airspeed_turn - K_beta * accel_y_filt_corrected;
 
-        feed_fwd_term_yaw = 9.81*tan(euler_vect[0])/airspeed_turn;
-        feed_back_term_yaw = - K_beta * accel_y_filt_corrected;
-
+            feed_fwd_term_yaw = 9.81*tan(euler_vect[0])/airspeed_turn;
+            feed_back_term_yaw = - K_beta * accel_y_filt_corrected;
+        #else
+            if(airspeed > OVERACTUATED_MIXING_MIN_SPEED_TRANSITION){
+                yaw_rate_setpoint_turn = 9.81*tan(euler_vect[0])/airspeed_turn - K_beta * accel_y_filt_corrected;
+                feed_fwd_term_yaw = 9.81*tan(euler_vect[0])/airspeed_turn;
+                feed_back_term_yaw = - K_beta * accel_y_filt_corrected;  
+            }     
+        #endif
         yaw_rate_setpoint_turn = yaw_rate_setpoint_turn * compute_lat_speed_multiplier(OVERACTUATED_MIXING_MIN_SPEED_TRANSITION,OVERACTUATED_MIXING_REF_SPEED_TRANSITION,airspeed);
 
         return yaw_rate_setpoint_turn;
