@@ -49,7 +49,7 @@
  * Variables declaration
  */
 
-// #define FLY_WITH_AIRSPEED
+#define FLY_WITH_AIRSPEED
 // #define USE_NEW_THR_ESTIMATION
 // #define NEW_AOA_DEFINITION 
 // #define FILTER_AIRSPEED
