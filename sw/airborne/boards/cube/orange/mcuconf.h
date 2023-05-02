@@ -20,7 +20,7 @@
 /*
  * Enforce old versions of the chip
  */
-#define STM32_ENFORCE_H7_REV_XY
+//#define STM32_ENFORCE_H7_REV_XY
 
 /*
  * STM32H7xx drivers configuration.
@@ -36,14 +36,27 @@
  * 0...3        Lowest...Highest.
  */
 
+/*
+TEMP Compare with ARDUPILOT board
+PE14 TIM1_CH4 TIM1 PWM(1) GPIO(50)
+PE13 TIM1_CH3 TIM1 PWM(2) GPIO(51)
+PE11 TIM1_CH2 TIM1 PWM(3) GPIO(52)
+PE9  TIM1_CH1 TIM1 PWM(4) GPIO(53)
+PD13 TIM4_CH2 TIM4 PWM(5) GPIO(54)
+PD14 TIM4_CH3 TIM4 PWM(6) GPIO(55)
+*/
+
 #define STM32H7xx_MCUCONF
-#define STM32H742_MCUCONF
+// #define STM32H742_MCUCONF
 #define STM32H743_MCUCONF
-#define STM32H753_MCUCONF
-#define STM32H745_MCUCONF
-#define STM32H755_MCUCONF
-#define STM32H747_MCUCONF
+//#define STM32H753_MCUCONF
+// #define STM32H745_MCUCONF
+// #define STM32H755_MCUCONF
+// #define STM32H747_MCUCONF
 #define STM32H757_MCUCONF
+
+#define STM32_PWM_USE_TIM15                 TRUE
+#define STM32_TIM15_SUPPRESS_ISR
 
 /*
  * General settings.

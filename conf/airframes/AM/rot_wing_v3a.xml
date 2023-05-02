@@ -11,6 +11,7 @@
 
     <firmware name="rotorcraft">
         <target name="ap" board="cube_orange">
+            <define NAME="STM32H7xx_MCUCONF"/>
             <configure VALUE="500" NAME="PERIODIC_FREQUENCY"/>
             <module TYPE="sbus" NAME="radio_control">
                 <configure VALUE="UART3" NAME="SBUS_PORT"/>
