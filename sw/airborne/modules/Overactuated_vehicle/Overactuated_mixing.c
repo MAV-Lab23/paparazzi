@@ -51,6 +51,7 @@
 
 #define FLY_WITH_AIRSPEED
 // #define USE_NEW_THR_ESTIMATION
+// #define USE_NEW_THR_ESTIMATION_OPTIMIZATION
 #define NEW_AOA_DEFINITION 
 #define FILTER_AIRSPEED
 #define NEW_YAWRATE_REFERENCE
@@ -132,7 +133,8 @@ float desired_angle_servo_9 = 0;
 float desired_angle_servo_10 = 0;
 
 //Sideslip gains
-float K_beta = 0.15;
+// float K_beta = 0.15;
+float K_beta = 0.1;
 
 float Dynamic_MOTOR_K_T_OMEGASQ;
 
@@ -503,7 +505,7 @@ float compute_yaw_rate_turn(void){
         float accel_y_filt_corrected = 0;
 
 
-        #if USE_NEW_THR_ESTIMATION                        
+        #ifdef USE_NEW_THR_ESTIMATION                        
         accel_y_filt_corrected = accely_filt.o[0] 
                                 - compute_propeller_thrust_in_body_frame(airspeed_filt.o[0],actuator_state_filt[4],actuator_state_filt[8],actuator_state_filt[0]).y/VEHICLE_MASS
                                 - compute_propeller_thrust_in_body_frame(airspeed_filt.o[0],actuator_state_filt[5],actuator_state_filt[9],actuator_state_filt[1]).y/VEHICLE_MASS
@@ -547,8 +549,7 @@ void compute_speed_ref_from_waypoint(float * speed_reference_control_rf, float *
     //Transpose position error from ground rf to control rf: 
     from_earth_to_control(pos_error_control_rf, pos_error_earth_rf, Psi);
 
-    //Before applying gains and bounds, let's compute the dynamic saturation point for the fwd speed, based on the control-x distance of the WP: 
-    float max_fwd_speed_approach_wp = sqrt( fabs(pos_error_control_rf[0]) * 2 * WP_CONTROL_MAX_DECEL_WP_APPROACH );
+
 
     //Compute the heading angle needed to get to the desired waypoint:
     float track_heading = atan2f(pos_error_control_rf[1],pos_error_control_rf[0]);
@@ -560,6 +561,9 @@ void compute_speed_ref_from_waypoint(float * speed_reference_control_rf, float *
 
     //Compute the the constarined waypoint distance in the x-y plane:
     float pos_error_xy_norm = sqrt(pos_error_control_rf[0] * pos_error_control_rf[0] + pos_error_control_rf[1] * pos_error_control_rf[1]);
+
+    //Let's compute the dynamic saturation point for the fwd speed, based on the control-x distance of the WP: 
+    float max_fwd_speed_approach_wp = sqrt( pos_error_xy_norm * 2 * WP_CONTROL_MAX_DECEL_WP_APPROACH );
 
     //Now rescale the position error using the track heading and constrained waypoint distance:
     pos_error_control_rf[0] = pos_error_xy_norm * cosf(track_heading);
@@ -863,7 +867,7 @@ void send_values_to_raspberry_pi(void){
 
     am7_data_out_local.desired_ailerons_value_int = (int16_t) (manual_ailerons_value * 1e2 * 180/M_PI);
 
-    #if USE_NEW_THR_ESTIMATION
+    #ifdef USE_NEW_THR_ESTIMATION_OPTIMIZATION
     extra_data_out_local[0] = PROP_MODEL_KT_REF;
     #else
     extra_data_out_local[0] = Dynamic_MOTOR_K_T_OMEGASQ;
