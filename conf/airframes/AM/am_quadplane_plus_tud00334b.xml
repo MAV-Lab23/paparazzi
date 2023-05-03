@@ -71,19 +71,16 @@ NOTES:
 
       <!-- optionall add extra magneto -->
       <module name="mag" type="rm3100">
-        <define name="USE_I2C1"/>
-        <configure name="MAG_RM3100_PERIODIC_FREQUENCY" value="125"/>
-        <configure name="MAG_RM3100_I2C_DEV" value="i2c1"/>
-        <define name="MODULE_RM3100_UPDATE_AHRS" value="TRUE"/>
-        <define name="RM3100_CHAN_X" value="1"/>
-        <define name="RM3100_CHAN_Y" value="0"/>
+        <configure name="MAG_RM3100_I2C_DEV" value="i2c2"/>
+        <define name="RM3100_CHAN_X_SIGN" value="+"/>
+        <define name="RM3100_CHAN_Y_SIGN" value="-"/>
+        <define name="RM3100_CHAN_Z_SIGN" value="+"/>
+        <define name="RM3100_CHAN_X" value="0"/>
+        <define name="RM3100_CHAN_Y" value="1"/>
         <define name="RM3100_CHAN_Z" value="2"/>
-        <define name="RM3100_CHAN_X_SIGN" value="-"/>
-        <define name="RM3100_CHAN_Y_SIGN" value="+"/>
-        <define name="RM3100_CHAN_Z_SIGN" value="-"/>
-
-        <configure name="MODULE_RM3100_SYNC_SEND" value="TRUE"/>
-      </module> 
+        <define name="MODULE_RM3100_SYNC_SEND" value="FALSE"/>
+        <define name="MODULE_RM3100_UPDATE_AHRS" value="TRUE"/>
+      </module>
  
       <!-- for cube? unknown-->
       <!-- <module name="baro_ms5611_spi">
@@ -149,6 +146,11 @@ NOTES:
         <define name="RADIO_FMODE" value="RADIO_AUX2"/> <!-- Throttle curve select -->
         <define name="RADIO_FBW_MODE" value="RADIO_AUX3"/> <!-- Switch between AP and FBW control -->
         <define name="RADIO_KILL_SWITCH" value="RADIO_AUX1"/>
+
+        <define name="RADIO_AUX2" value="5"/>
+        <define name="RADIO_AUX3" value="5"/>
+        <define name="RADIO_AUX4" value="5"/>
+        <define name="RADIO_AUX5" value="5"/>
       </module>
 
       <module name="sys_mon"/><!-- Enable if one want to check processor load for higher loop, nav, module etc. frequencies -->
@@ -243,14 +245,15 @@ NOTES:
     <define name="USE_MAGNETOMETER_ONGROUND" value="TRUE"/>
     <!--<configure name="USE_MAGNETOMETER" value="TRUE"/>-->
 
-    <module name="ahrs" type="float_cmpl_quat">
+    <!-- <module name="ahrs" type="float_cmpl_quat"> -->
       <!--<configure name="AHRS_ALIGNER_LED" value="2"/>--><!-- no support yet-->
-      <define name="AHRS_GPS_SPEED_IN_NEGATIVE_Z_DIRECTION" value="FALSE"/>
-      <define name="AHRS_HEADING_UPDATE_GPS_MIN_SPEED" value="1.0"/><!--RTK heading can be 0 -->
-      <define name="AHRS_GRAVITY_HEURISTIC_FACTOR" value="0.0"/>
-      <define name="AHRS_FC_MAG_ID" value="MAG_IST8310_SENDER_ID"/>
+      <!-- <define name="AHRS_GPS_SPEED_IN_NEGATIVE_Z_DIRECTION" value="FALSE"/> -->
+      <!--RTK heading can be 0 -->
+      <!-- <define name="AHRS_HEADING_UPDATE_GPS_MIN_SPEED" value="1.0"/> -->
+      <!-- <define name="AHRS_GRAVITY_HEURISTIC_FACTOR" value="0.0"/> -->
+      <!-- <define name="AHRS_FC_MAG_ID" value="MAG_IST8310_SENDER_ID"/> -->
       <!--<define name="AHRS_FC_MAG_ID" value="MAG_RM3100_SENDER_ID"/>--><!-- Only after hardware was added -->
-    </module>
+    <!-- </module/> -->
 
     <module name="stabilization" type="indi_simple"/>
  
@@ -285,7 +288,7 @@ NOTES:
 
     <module name="traffic_info"/>
     <!-- <module name="tcas"/> -->
-    <!-- <module name="Overactuated_mixing"/> -->
+    <module name="Overactuated_mixing"/>
 
     <define name="VEL_SP_FCR_ID" value="10"/>
     <define name="AMT_ERR_SLOWDOWN_GAIN" value="0.25"/>
@@ -803,7 +806,7 @@ NOTES:
   </section>
 
   <section name="MISC">
-    <define name="VoltageOfAdc(adc)" value="((3.3f/4096.0f) * 11.3 * adc)"/><!-- TODO: verify/calibrate -->
+    <define name="VoltageOfAdc(adc)" value="((3.3f/4096.0f) * 0.8 * adc)"/><!-- TODO: verify/calibrate -->
     <define name="NO_RC_THRUST_LIMIT" value="TRUE"/>
     <!--define name="UART7_CR2" value="(USART_CR2_STOP1_BITS | USART_CR2_SWAP_Msk)"/--> <!-- Swap RX/TX since RX doesn't work-->
 
