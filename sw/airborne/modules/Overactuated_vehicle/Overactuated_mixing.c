@@ -83,7 +83,7 @@ float overestimation_coeff = 1.4;
 
 
 // #define TEST_PWM_SERVOS
-// #define TEST_RPM_CONTROL
+#define TEST_RPM_CONTROL
 // #define TEST_DSHOT_CONTROL
 // #define TEST_ROTOR_ANGLES
 
@@ -1725,6 +1725,8 @@ void overactuated_mixing_run(void)
                         indi_u[14] = 0;
                         actuator_output[12] = (int32_t) (test_frequency*100);
                     #endif
+
+
                 //END TESTING
 
                 #ifndef TEST_DSHOT_CONTROL

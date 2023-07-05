@@ -108,8 +108,6 @@ extern float K_beta;
 extern float K_T_airspeed;
 extern float K_d_speed;
 
-extern int16_t neutral_servo_1_pwm; 
-extern int16_t neutral_servo_2_pwm; 
 
 extern float CL_ailerons;
 
