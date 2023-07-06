@@ -287,59 +287,94 @@ int start_test_bool = 0;
 
 #ifdef TEST_NOAH_WINDTUNNEL
 
-    // float start_time = get_sys_time_float();
-    // uint32_t state = 0;
-    // uint32_t length_test_case = 5;
-    // uint32_t experiment_block_duration = 15*60;
+    float start_time;
+    int experiment_state = 0;
+    int length_test_case = 5;
+    int experiment_block_duration = 15*60;
 
-    // bool end_experiment = false;
+    bool end_experiment = false;
+    bool get_start_time = true;
 
-    // void noah_windtunnel_startup(float start_time, float current_time, struct overactuated_mixing_t* output) {
+    float tilt_angles[15] = {-20.0f, -10.0f, 0.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 90.0f, 100.0f, 110.0f, 120.0f};
+    float fraction_max_motor_speed = 0.2;
+    float max_motor_speed = 1000.0f;
 
-    //     // Vary All rotor DSHOT from 0 to 2000 three times in 15 seconds
-    //     float period = 2*pi / 10;
-    //     int32_t dshot_motors = (int32_t) abs(2000 * sin(period * (current_time - start_time)));
+    void noah_windtunnel_startup(float current_time, float *indi_u) {
 
-    //     // Commands are int32_t
+        // Vary All rotor DSHOT from 0 to 2000 three times in 15 seconds
+        float period = 2*M_PI / 10;
+        int32_t dshot_motors = (int32_t) fabs(1000 * sin(period * (current_time - start_time)));
 
-    //     // Set motor RPM (must be converted to DSHOT)
-    //     output->commands[0] = dshot_motors;     // Front left
-    //     output->commands[1] = dshot_motors;     // Front right
-    //     output->commands[2] = dshot_motors;     // Back right
-    //     output->commands[3] = dshot_motors;     // Back left
+        // Commands are int32_t
 
-    //     // Set tilt elevation angles (rad)
-    //     output->commands[4] = 0;    // Front left
-    //     output->commands[5] = 0;    // Front right
-    //     output->commands[6] = 0;    // Back right
-    //     output->commands[7] = 0;    // Back left
+        // Set motor RPM (must be converted to DSHOT)
+        indi_u[0] = dshot_motors;     // Front left
+        indi_u[1] = dshot_motors;     // Front right
+        indi_u[2] = dshot_motors;     // Back right
+        indi_u[3] = dshot_motors;     // Back left
 
-    //     return
-    // }
+        // Set tilt elevation angles (rad)
+        indi_u[4] = 0;    // Front left
+        indi_u[5] = 0;    // Front right
+        indi_u[6] = 0;    // Back right
+        indi_u[7] = 0;    // Back left
 
-    // uint32_t noah_windtunnel_matrix(float start_time, float current_time, uint32_t state, struct overactuated_mixing_t* output) {
+        return;
+    }
 
-    //     // Set motor RPM (must be converted to DSHOT)
-    //     output->commands[0] = 0;
-    //     output->commands[1] = 0;
-    //     output->commands[2] = 0;
-    //     output->commands[3] = 0;
+    int noah_windtunnel_matrix(float current_time, int experiment_state, float* indi_u) {
+        
+        int i, j;
+        int number_configurations = (sizeof(tilt_angles) / sizeof(tilt_angles[0]));
 
-    //     // Set tilt elevation angles (rad)
-    //     output->commands[4] = 0;
-    //     output->commands[5] = 0;
-    //     output->commands[6] = 0;
-    //     output->commands[7] = 0;
+        i = experiment_state / number_configurations;
+        j = experiment_state % number_configurations;
 
-    //     return (state + 1)
-    // }
+        float motor_speed = max_motor_speed * fraction_max_motor_speed;
 
-    void noah_windtunnel_controller(float * indi_u, int start_test_bool_local, float slider_var_1_local) {
+        // Set motor speed in rad/s
+        indi_u[0] = motor_speed;
+        indi_u[1] = motor_speed;
+        indi_u[2] = motor_speed;
+        indi_u[3] = motor_speed;
+
+        // Set tilt elevation angles (rad)
+        indi_u[4] = tilt_angles[i];
+        indi_u[5] = tilt_angles[i];
+        indi_u[6] = tilt_angles[j];
+        indi_u[7] = tilt_angles[j];
+
+        return experiment_state++;
+    }
+
+    void noah_windtunnel_controller(float *indi_u, int start_test_bool_local, float slider_var_1_local) {
+
+        if (get_start_time && start_test_bool) {
+            start_time = get_sys_time_float();
+            get_start_time = false;
+        }
+
+        if (experiment_state > (sizeof(tilt_angles) / sizeof(tilt_angles[0]))) {
+            end_experiment = true;
+            start_test_bool = false;
+            
+            return;
+        }
 
         // float time_now = get_sys_time_float();
 
         indi_u[0] = slider_var_1_local; 
         indi_u[4] = start_test_bool_local*1.0f; 
+
+        float current_time = get_sys_time_float();
+
+        if (current_time - start_time < 15) {
+            noah_windtunnel_startup(current_time, indi_u);
+        }
+
+        else {
+            experiment_state = noah_windtunnel_matrix(current_time, experiment_state, indi_u);
+        }
 
     }
 #endif
