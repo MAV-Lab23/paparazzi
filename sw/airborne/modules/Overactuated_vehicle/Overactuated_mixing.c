@@ -286,11 +286,10 @@ float slider_var_1 = 0;
 int start_test_bool = 0; 
 
 #ifdef TEST_NOAH_WINDTUNNEL
-    // Testing commit from home pc
+
     float start_time;
+    float last_state_change = 0;
     int experiment_state = 0;
-    int length_test_case = 5;
-    int experiment_block_duration = 15*60;
 
     bool end_experiment = false;
     bool get_start_time = true;
@@ -303,15 +302,15 @@ int start_test_bool = 0;
 
         // Vary All rotor DSHOT from 0 to 2000 three times in 15 seconds
         float period = 2*M_PI / 10;
-        int32_t dshot_motors = (int32_t) fabs(1000 * sin(period * (current_time - start_time)));
+        int32_t rad_per_second_motors = (int32_t) fabs(1000 * sin(period * (current_time - start_time)));
 
         // Commands are int32_t
 
         // Set motor RPM (must be converted to DSHOT)
-        indi_u[0] = dshot_motors;     // Front left
-        indi_u[1] = dshot_motors;     // Front right
-        indi_u[2] = dshot_motors;     // Back right
-        indi_u[3] = dshot_motors;     // Back left
+        indi_u[0] = rad_per_second_motors;     // Front left
+        indi_u[1] = rad_per_second_motors;     // Front right
+        indi_u[2] = rad_per_second_motors;     // Back right
+        indi_u[3] = rad_per_second_motors;     // Back left
 
         // Set tilt elevation angles (rad)
         indi_u[4] = 0;    // Front left
@@ -344,21 +343,31 @@ int start_test_bool = 0;
         indi_u[6] = tilt_angles[j];
         indi_u[7] = tilt_angles[j];
 
-        return experiment_state++;
+        if ((current_time - last_state_change) <= 5) {
+            last_state_change = current_time;
+            return experiment_state++;
+        }
+
+        else {
+            return  experiment_state;
+        }
     }
 
     void noah_windtunnel_controller(float *indi_u, int start_test_bool_local, float slider_var_1_local) {
 
-        if (get_start_time && start_test_bool) {
-            start_time = get_sys_time_float();
-            get_start_time = false;
-        }
+        // Guard statements
+        if (!start_test_bool_local) return;
+        int num_tilt_cases = (sizeof(tilt_angles) / sizeof(tilt_angles[0]));
 
-        if (experiment_state > (sizeof(tilt_angles) / sizeof(tilt_angles[0]))) {
+        if (experiment_state > num_tilt_cases*num_tilt_cases) {
             end_experiment = true;
             start_test_bool = false;
-            
             return;
+        }
+
+        if (get_start_time) {
+            start_time = get_sys_time_float();
+            get_start_time = false;
         }
 
         // float time_now = get_sys_time_float();
