@@ -83,11 +83,14 @@ float overestimation_coeff = 1.4;
 
 
 // #define TEST_PWM_SERVOS
-// #define TEST_RPM_CONTROL
+#define TEST_RPM_CONTROL
 // #define TEST_DSHOT_CONTROL
 // #define TEST_ROTOR_ANGLES
 
 // #define TEST_RASMUS_SERVO
+
+#define TEST_NOAH_WINDTUNNEL
+
 // float time_old = 0; 
 // float test_frequency = 0.5;
 
@@ -275,7 +278,71 @@ float time_of_speed_setpoint_approach = 0;
 
 static abi_event get_agl_corrected_value_ev;
 float altitude_lidar_agl_meters; 
-int approach_state = 1; 
+int approach_state = 1;
+
+
+//Noah variables for slider: 
+float slider_var_1 = 0;
+int start_test_bool = 0; 
+
+#ifdef TEST_NOAH_WINDTUNNEL
+
+    // float start_time = get_sys_time_float();
+    // uint32_t state = 0;
+    // uint32_t length_test_case = 5;
+    // uint32_t experiment_block_duration = 15*60;
+
+    // bool end_experiment = false;
+
+    // void noah_windtunnel_startup(float start_time, float current_time, struct overactuated_mixing_t* output) {
+
+    //     // Vary All rotor DSHOT from 0 to 2000 three times in 15 seconds
+    //     float period = 2*pi / 10;
+    //     int32_t dshot_motors = (int32_t) abs(2000 * sin(period * (current_time - start_time)));
+
+    //     // Commands are int32_t
+
+    //     // Set motor RPM (must be converted to DSHOT)
+    //     output->commands[0] = dshot_motors;     // Front left
+    //     output->commands[1] = dshot_motors;     // Front right
+    //     output->commands[2] = dshot_motors;     // Back right
+    //     output->commands[3] = dshot_motors;     // Back left
+
+    //     // Set tilt elevation angles (rad)
+    //     output->commands[4] = 0;    // Front left
+    //     output->commands[5] = 0;    // Front right
+    //     output->commands[6] = 0;    // Back right
+    //     output->commands[7] = 0;    // Back left
+
+    //     return
+    // }
+
+    // uint32_t noah_windtunnel_matrix(float start_time, float current_time, uint32_t state, struct overactuated_mixing_t* output) {
+
+    //     // Set motor RPM (must be converted to DSHOT)
+    //     output->commands[0] = 0;
+    //     output->commands[1] = 0;
+    //     output->commands[2] = 0;
+    //     output->commands[3] = 0;
+
+    //     // Set tilt elevation angles (rad)
+    //     output->commands[4] = 0;
+    //     output->commands[5] = 0;
+    //     output->commands[6] = 0;
+    //     output->commands[7] = 0;
+
+    //     return (state + 1)
+    // }
+
+    void noah_windtunnel_controller(float * indi_u, int start_test_bool_local, float slider_var_1_local) {
+
+        // float time_now = get_sys_time_float();
+
+        indi_u[0] = slider_var_1_local; 
+        indi_u[4] = start_test_bool_local*1.0f; 
+
+    }
+#endif
 
 struct PID_over pid_gains_over = {
     .p = { OVERACTUATED_MIXING_PID_P_GAIN_PHI,
@@ -1725,6 +1792,14 @@ void overactuated_mixing_run(void)
                         indi_u[14] = 0;
                         actuator_output[12] = (int32_t) (test_frequency*100);
                     #endif
+
+                    #ifdef TEST_NOAH_WINDTUNNEL
+                        noah_windtunnel_controller(&indi_u[0], start_test_bool, slider_var_1);
+
+
+                    #endif
+
+
                 //END TESTING
 
                 #ifndef TEST_DSHOT_CONTROL
