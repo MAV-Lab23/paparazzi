@@ -297,12 +297,15 @@ int start_test_bool = 0;
     float start_time = 0;
     float last_state_change = 0;
     const float fraction_max_motor_speed = 0.2; // Parameter to change between experiments runs
-    const float max_motor_speed = 1000.0f;      // In rad/s
+    const float max_motor_speed = 200.0f;      // In rad/s ** MAKE SURE TO TUNE ACCORDING TO POWER SUPPLY CAPABILITIES **
     const float motor_speed = fraction_max_motor_speed * max_motor_speed;
     const float period = 2*M_PI / 10;
 
     void noah_windtunnel_experiment_end(float *indi_u) {
+        
+        // End wind tunnel experiment function, sets motor speed and elevation angle to 0
         // Set motor RPM in rad/s
+        
         indi_u[0] = 0;     // Front left
         indi_u[1] = 0;     // Front right
         indi_u[2] = 0;     // Back right
@@ -318,6 +321,8 @@ int start_test_bool = 0;
     void noah_windtunnel_startup(float *indi_u,
                                  float current_time_local,
                                  float start_time_local) {
+        
+        // Wind tunnel startup maneuver function
 
         // Vary All rotor DSHOT from 0 to 2000 three times in 15 seconds
         int32_t rad_per_second_motors = (int32_t) fabs(max_motor_speed * sin(period * (current_time_local - start_time_local)));
@@ -341,6 +346,8 @@ int start_test_bool = 0;
                                int *experiment_state_ptr,
                                float *last_state_change_ptr,
                                float current_time_local) {
+        
+        // This function runs the test matrix
         
         int i, j;
 
@@ -375,38 +382,40 @@ int start_test_bool = 0;
                                     bool *get_start_time_ptr,
                                     bool *end_experiment_ptr,
                                     float slider_var_1_local) {
+        
+        // Wind tunnel experiment matrix function
 
         // Guard statements
         if (!start_test_bool_local) return;
-
-        if (*end_experiment_ptr) {
-            noah_windtunnel_experiment_end(indi_u);
-            return;
-        }
-
-        if (*experiment_state_ptr > num_tilt_cases*num_tilt_cases) {
-            *end_experiment_ptr = true;
-        }
 
         if (*get_start_time_ptr) {
             *start_time_ptr = get_sys_time_float();
             *get_start_time_ptr = false;
         }
 
-        // float time_now = get_sys_time_float();
-        // indi_u[0] = slider_var_1_local;
-        // indi_u[4] = start_test_bool_local*1.0f;
+        if (*experiment_state_ptr > num_tilt_cases*num_tilt_cases) {
+            *end_experiment_ptr = true;
+        }
 
         float current_time = get_sys_time_float();
 
-        // Testing logic
-        if (current_time - *start_time_ptr <= 15) {
+        if (*end_experiment_ptr) {
+            noah_windtunnel_experiment_end(indi_u);
+            return;
+        }
+
+        else if (current_time - *start_time_ptr <= 15) {
             noah_windtunnel_startup(indi_u, current_time, *start_time_ptr);
         }
 
         else {
             *experiment_state_ptr = noah_windtunnel_matrix(indi_u, experiment_state_ptr, last_state_change_ptr, current_time);
         }
+
+        
+        // float time_now = get_sys_time_float();
+        // indi_u[0] = slider_var_1_local;
+        // indi_u[4] = start_test_bool_local*1.0f;
 
     }
 #endif
