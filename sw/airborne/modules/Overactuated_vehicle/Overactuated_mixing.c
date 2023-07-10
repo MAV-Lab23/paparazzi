@@ -301,14 +301,14 @@ int start_test_bool = 0;
     const float motor_speed = fraction_max_motor_speed * max_motor_speed;
     const float period = 2*M_PI / 10;
 
-    void noah_windtunnel_experiment_end(float *indi_u, float *last_state_change_ptr, int current_time_local) {
+    void noah_windtunnel_experiment_end(float *indi_u, float *last_state_change_ptr, float current_time_local) {
         
         // End wind tunnel experiment function, sets motor speed and elevation angle to 0
         // Set motor RPM in rad/s
 
         float exponential = exp(-0.1*(current_time_local - *last_state_change_ptr));
         float motor_speed_local = motor_speed * exponential;
-        float tilt_angle_local = tilt_angles[num_tilt_cases-1] * exponential;
+        float tilt_angle_local = tilt_angles[num_tilt_cases-1] * M_PI * exponential / 180;
 
         
         indi_u[0] = motor_speed_local;     // Front left
@@ -405,7 +405,7 @@ int start_test_bool = 0;
         float current_time = get_sys_time_float();
 
         if (*end_experiment_ptr) {
-            noah_windtunnel_experiment_end(indi_u, current_time, last_state_change_ptr;
+            noah_windtunnel_experiment_end(indi_u, last_state_change_ptr, current_time);
             return;
         }
 
