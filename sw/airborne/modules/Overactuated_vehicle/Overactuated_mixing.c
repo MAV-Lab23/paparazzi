@@ -301,21 +301,26 @@ int start_test_bool = 0;
     const float motor_speed = fraction_max_motor_speed * max_motor_speed;
     const float period = 2*M_PI / 10;
 
-    void noah_windtunnel_experiment_end(float *indi_u) {
+    void noah_windtunnel_experiment_end(float *indi_u, float *last_state_change_ptr, int current_time_local) {
         
         // End wind tunnel experiment function, sets motor speed and elevation angle to 0
         // Set motor RPM in rad/s
+
+        float exponential = exp(-0.1*(current_time_local - *last_state_change_ptr));
+        float motor_speed_local = motor_speed * exponential;
+        float tilt_angle_local = tilt_angles[num_tilt_cases-1] * exponential;
+
         
-        indi_u[0] = 0;     // Front left
-        indi_u[1] = 0;     // Front right
-        indi_u[2] = 0;     // Back right
-        indi_u[3] = 0;     // Back left
+        indi_u[0] = motor_speed_local;     // Front left
+        indi_u[1] = motor_speed_local;     // Front right
+        indi_u[2] = motor_speed_local;     // Back right
+        indi_u[3] = motor_speed_local;     // Back left
 
         // Set tilt elevation angles (rad)
-        indi_u[4] = 0;    // Front left
-        indi_u[5] = 0;    // Front right
-        indi_u[6] = 0;    // Back right
-        indi_u[7] = 0;    // Back left
+        indi_u[4] = tilt_angle_local;    // Front left
+        indi_u[5] = tilt_angle_local;    // Front right
+        indi_u[6] = tilt_angle_local;    // Back right
+        indi_u[7] = tilt_angle_local;    // Back left
     }
 
     void noah_windtunnel_startup(float *indi_u,
@@ -324,7 +329,7 @@ int start_test_bool = 0;
         
         // Wind tunnel startup maneuver function
 
-        // Vary All rotor DSHOT from 0 to 2000 three times in 15 seconds
+        // Vary All rotor rad/s from 0 to max_motor_speed three times in 15 seconds (Check with Ewoud if too fast!)
         int32_t rad_per_second_motors = (int32_t) fabs(max_motor_speed * sin(period * (current_time_local - start_time_local)));
 
         // Set motor RPM in rad/s
@@ -400,7 +405,7 @@ int start_test_bool = 0;
         float current_time = get_sys_time_float();
 
         if (*end_experiment_ptr) {
-            noah_windtunnel_experiment_end(indi_u);
+            noah_windtunnel_experiment_end(indi_u, current_time, last_state_change_ptr;
             return;
         }
 
