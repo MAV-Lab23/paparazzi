@@ -348,7 +348,7 @@ int16_t start_state = 0;
         indi_u[6] = -90.0f * M_PI / 180.0f;    // Back right
         indi_u[7] = -90.0f * M_PI / 180.0f;    // Back left
 
-        return;
+        last_state_change = get_sys_time_float();
     }
 
     void noah_windtunnel_matrix(float *indi_u) {
@@ -367,10 +367,10 @@ int16_t start_state = 0;
         indi_u[3] = slider_var_1 * max_motor_speed / 10.0f;
 
         // Set tilt elevation angles (rad)
-        indi_u[4] = 0.0f;
+        indi_u[4] = - M_PI / 2.0f;
         indi_u[5] = tilt_angles[i] * M_PI / 180.0f;
         indi_u[6] = tilt_angles[j] * M_PI / 180.0f;
-        indi_u[7] = 0.0f;
+        indi_u[7] = - M_PI/ 2.0f;
 
         if ((get_sys_time_float() - last_state_change) >= 5) {
             last_state_change = get_sys_time_float();
