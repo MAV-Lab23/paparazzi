@@ -291,18 +291,18 @@ int start_state = 0;
 #ifdef TEST_NOAH_WINDTUNNEL
     
     #define VOLTAGE_CUTOFF 15.0f
-    bool using_battery = false;
+    int using_battery = 1;
 
-    const float tilt_angles[15] = {-20.0f, -10.0f, 0.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 90.0f, 100.0f, 110.0f, 120.0f};
+    const float tilt_angles[15] = {20.0f, 10.0f, 0.0f, -10.0f, -20.0f, -30.0f, -40.0f, -50.0f, -60.0f, -70.0f, -80.0f, -90.0f, -100.0f, -110.0f, -120.0f};
     int experiment_state = 0;
     const int num_tilt_cases = (sizeof(tilt_angles) / sizeof(tilt_angles[0]));
 
-    bool end_experiment = false;
-    bool get_start_time = true;
+    int end_experiment = 0;
+    int get_start_time = 1;
 
     float start_time = 0;
     float last_state_change = 0;
-    const float fraction_max_motor_speed = 0.2; // Parameter to change between experiments runs
+    const float fraction_max_motor_speed = 0.5; // Parameter to change between experiments runs
     const float max_motor_speed = 200.0f;      // In rad/s ** MAKE SURE TO TUNE ACCORDING TO POWER SUPPLY CAPABILITIES **
     const float motor_speed = fraction_max_motor_speed * max_motor_speed;
     const float period = 2*M_PI / 10;
@@ -336,7 +336,7 @@ int start_state = 0;
         // Wind tunnel startup maneuver function
 
         // Vary All rotor rad/s from 0 to max_motor_speed three times in 15 seconds (Check with Ewoud if too fast!)
-        int32_t rad_per_second_motors = (int32_t) fabs(max_motor_speed * sin(period * (current_time_local - start_time_local)));
+        float rad_per_second_motors = fabs(max_motor_speed * sin(period * (current_time_local - start_time_local)));
 
         // Set motor RPM in rad/s
         indi_u[0] = rad_per_second_motors;     // Front left
@@ -345,10 +345,10 @@ int start_state = 0;
         indi_u[3] = rad_per_second_motors;     // Back left
 
         // Set tilt elevation angles (rad)
-        indi_u[4] = 0;    // Front left
-        indi_u[5] = 0;    // Front right
-        indi_u[6] = 0;    // Back right
-        indi_u[7] = 0;    // Back left
+        indi_u[4] = -90.0f * M_PI / 180.0f;    // Front left
+        indi_u[5] = -90.0f * M_PI / 180.0f;    // Front right
+        indi_u[6] = -90.0f * M_PI / 180.0f;    // Back right
+        indi_u[7] = -90.0f * M_PI / 180.0f;    // Back left
 
         return;
     }
@@ -367,16 +367,16 @@ int start_state = 0;
         j = *experiment_state_ptr % num_tilt_cases;
 
         // Set motor speed in rad/s
-        indi_u[0] = slider_variable * max_motor_speed / 10;
-        indi_u[1] = slider_variable * max_motor_speed / 10;
-        indi_u[2] = slider_variable * max_motor_speed / 10;
-        indi_u[3] = slider_variable * max_motor_speed / 10;
+        indi_u[0] = slider_variable * max_motor_speed / 10.0f;
+        indi_u[1] = slider_variable * max_motor_speed / 10.0f;
+        indi_u[2] = slider_variable * max_motor_speed / 10.0f;
+        indi_u[3] = slider_variable * max_motor_speed / 10.0f;
 
         // Set tilt elevation angles (rad)
-        indi_u[4] = tilt_angles[i] * M_PI / 180;
-        indi_u[5] = tilt_angles[i] * M_PI / 180;
-        indi_u[6] = tilt_angles[j] * M_PI / 180;
-        indi_u[7] = tilt_angles[j] * M_PI / 180;
+        indi_u[4] = tilt_angles[i] * M_PI / 180.0f;
+        indi_u[5] = tilt_angles[i] * M_PI / 180.0f;
+        indi_u[6] = tilt_angles[j] * M_PI / 180.0f;
+        indi_u[7] = tilt_angles[j] * M_PI / 180.0f;
 
         if ((current_time_local - *last_state_change_ptr) >= 5) {
             *last_state_change_ptr = current_time_local;
@@ -391,26 +391,29 @@ int start_state = 0;
                                     float *last_state_change_ptr,
                                     int *experiment_state_ptr,
                                     int start_test_bool_local,
-                                    bool *get_start_time_ptr,
-                                    bool *end_experiment_ptr,
+                                    int *get_start_time_ptr,
+                                    int *end_experiment_ptr,
                                     float slider_var_1_local) {
         
         // Wind tunnel experiment matrix function
 
         // Guard statements
-        if (!start_test_bool_local) return;
+        if (!start_test_bool_local) {
+            *get_start_time_ptr = 1;
+            return;
+        }
 
         if (*get_start_time_ptr) {
             *start_time_ptr = get_sys_time_float();
-            *get_start_time_ptr = false;
+            *get_start_time_ptr = 0;
         }
 
         if (*experiment_state_ptr > num_tilt_cases*num_tilt_cases) {
-            *end_experiment_ptr = true;
+            *end_experiment_ptr = 1;
         }
 
-        if (using_battery && electrical.vsupply < VOLTAGE_CUTOFF) {
-            *end_experiment_ptr = true;
+        if (using_battery && electrical.vsupply < cuteoff_volt) {
+            *end_experiment_ptr = 1;
 
             // PRINT experiment_state
             
@@ -418,14 +421,14 @@ int start_state = 0;
 
         float current_time = get_sys_time_float();
         // float time_now = get_sys_time_float();
-        indi_u[0] = slider_var_1_local;
+        // indi_u[0] = slider_var_1_local;
 
         if (*end_experiment_ptr) {
             noah_windtunnel_experiment_end(indi_u, last_state_change_ptr, current_time);
             return;
         }
 
-        else if (current_time - *start_time_ptr <= 15) {
+        else if (current_time - (*start_time_ptr) <= 15.0f) {
             noah_windtunnel_startup(indi_u, current_time, *start_time_ptr);
         }
 
@@ -1892,7 +1895,7 @@ void overactuated_mixing_run(void)
                         noah_windtunnel_controller(&indi_u[0],
                                                    &start_time,
                                                    &last_state_change,
-                                                   &experiment_state,
+                                                   &start_state,
                                                    start_test_bool,
                                                    &get_start_time,
                                                    &end_experiment,
