@@ -144,7 +144,7 @@ extern int approach_state;
 extern float slider_var_1;
 extern int start_test_bool; 
 extern float cuteoff_volt;
-extern int start_state; 
+extern int16_t start_state; 
 
 /* External used functions */
 extern void overactuated_mixing_init(void);
