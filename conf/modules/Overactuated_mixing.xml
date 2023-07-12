@@ -94,8 +94,9 @@
   <settings>
     <dl_settings>
       <dl_settings NAME="Noah test">
-
-        <dl_setting var="slider_var_1" min="0" step="1" max="1200" shortname="slider_var_1"/>
+        <dl_setting var="slider_var_1" min="0" step="1" max="10" shortname="slider_var_1"/>
+        <dl_setting var="cuteoff_volt" min="0" step="0.1" max="20" shortname="cuteoff_volt"/>
+        <dl_setting var="start_state" min="0" step="1" max="2000" shortname="start_state"/>
         <dl_setting var="start_test_bool" min="0" step="1" max="1" shortname="start_test_bool"/>
       </dl_settings>
     </dl_settings>

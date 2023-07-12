@@ -284,6 +284,9 @@ int approach_state = 1;
 //Noah variables for slider: 
 float slider_var_1 = 0;
 int start_test_bool = 0;
+float cuteoff_volt = 13.0;
+int start_state = 0; 
+
 
 #ifdef TEST_NOAH_WINDTUNNEL
     
