@@ -303,7 +303,7 @@ int16_t start_state = 0;
     float start_time = 0;
     float last_state_change = 0;
     const float fraction_max_motor_speed = 0.5; // Parameter to change between experiments runs
-    const float max_motor_speed = (float) RPM_CONTROL_FBW_MAX_OMEGA_RAD_S/2.0f; // MAKE SURE TO TUNE ACCORDING TO POWER SUPPLY CAPABILITIES **
+    const float max_motor_speed = (float) RPM_CONTROL_FBW_MAX_OMEGA_RAD_S; // MAKE SURE TO TUNE ACCORDING TO POWER SUPPLY CAPABILITIES **
     const float motor_speed = fraction_max_motor_speed * max_motor_speed;
     const float period = 2*M_PI / 10.0f;
 
@@ -1552,10 +1552,8 @@ void overactuated_mixing_run(void)
                     dshot_cmd_ppz[i] = overactuated_mixing.commands[i];
 
                     #else //PID RPM CONTROL
-
-                    motor_rad_s_filtered_old[i] = actuator_state[i];
-                    motor_rad_s_error_integrated[i] = 0;
-
+                        motor_rad_s_filtered_old[i] = actuator_state[i];
+                        motor_rad_s_error_integrated[i] = 0;
                     #endif 
 
                     motor_rad_s_filtered[i] = actuator_state[i];
@@ -1781,13 +1779,13 @@ void overactuated_mixing_run(void)
                     #ifdef TEST_RPM_CONTROL
                     #warning You are using a testing define!!! 
                         indi_u[0] = (2 * M_PI) * Des_RPM_motor_1 / 60;
-                        indi_u[1] = 0;
-                        indi_u[2] = 0;
-                        indi_u[3] = 0;
-                        indi_u[4] = 0;
-                        indi_u[5] = 0;
-                        indi_u[6] = 0;
-                        indi_u[7] = 0;
+                        indi_u[1] = (2 * M_PI) * Des_RPM_motor_1 / 60;
+                        indi_u[2] = (2 * M_PI) * Des_RPM_motor_1 / 60;
+                        indi_u[3] = (2 * M_PI) * Des_RPM_motor_1 / 60;
+                        indi_u[4] = -M_PI/2.0f;
+                        indi_u[5] = -M_PI/2.0f;
+                        indi_u[6] = -M_PI/2.0f;
+                        indi_u[7] = -M_PI/2.0f;
                         indi_u[8] = 0;
                         indi_u[9] = 0;
                         indi_u[10] = 0;
@@ -1921,6 +1919,9 @@ void overactuated_mixing_run(void)
 
                             //Compute the incremental ppz cmd for the motors:
                             dshot_cmd_ppz[i] = ( dshot_cmd_state_filtered[i] + K_indi_rad_s_dshot * (indi_u[i] - motor_rad_s_filtered[i]));
+
+                            //Bound the dshot cmd to the max and min PPZ value 
+                            Bound(dshot_cmd_ppz[i], 0, MAX_PPRZ);
 
                             //Assign computed cmd to the output array: 
                             overactuated_mixing.commands[i] = (int32_t) (dshot_cmd_ppz[i]);
