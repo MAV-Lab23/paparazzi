@@ -287,6 +287,9 @@ int start_test_bool = 0;
 
 #ifdef TEST_NOAH_WINDTUNNEL
     
+    #define VOLTAGE_CUTOFF 15.0f
+    bool using_battery = false;
+
     const float tilt_angles[15] = {-20.0f, -10.0f, 0.0f, 10.0f, 20.0f, 30.0f, 40.0f, 50.0f, 60.0f, 70.0f, 80.0f, 90.0f, 100.0f, 110.0f, 120.0f};
     int experiment_state = 0;
     const int num_tilt_cases = (sizeof(tilt_angles) / sizeof(tilt_angles[0]));
@@ -350,7 +353,8 @@ int start_test_bool = 0;
     int noah_windtunnel_matrix(float *indi_u,
                                int *experiment_state_ptr,
                                float *last_state_change_ptr,
-                               float current_time_local) {
+                               float current_time_local,
+                               float slider_variable) {
         
         // This function runs the test matrix
         
@@ -360,10 +364,10 @@ int start_test_bool = 0;
         j = *experiment_state_ptr % num_tilt_cases;
 
         // Set motor speed in rad/s
-        indi_u[0] = motor_speed;
-        indi_u[1] = motor_speed;
-        indi_u[2] = motor_speed;
-        indi_u[3] = motor_speed;
+        indi_u[0] = slider_variable * max_motor_speed / 10;
+        indi_u[1] = slider_variable * max_motor_speed / 10;
+        indi_u[2] = slider_variable * max_motor_speed / 10;
+        indi_u[3] = slider_variable * max_motor_speed / 10;
 
         // Set tilt elevation angles (rad)
         indi_u[4] = tilt_angles[i] * M_PI / 180;
@@ -402,7 +406,16 @@ int start_test_bool = 0;
             *end_experiment_ptr = true;
         }
 
+        if (using_battery && electrical.vsupply < VOLTAGE_CUTOFF) {
+            *end_experiment_ptr = true;
+
+            // PRINT experiment_state
+            
+        }
+
         float current_time = get_sys_time_float();
+        // float time_now = get_sys_time_float();
+        indi_u[0] = slider_var_1_local;
 
         if (*end_experiment_ptr) {
             noah_windtunnel_experiment_end(indi_u, last_state_change_ptr, current_time);
@@ -414,12 +427,10 @@ int start_test_bool = 0;
         }
 
         else {
-            *experiment_state_ptr = noah_windtunnel_matrix(indi_u, experiment_state_ptr, last_state_change_ptr, current_time);
+            *experiment_state_ptr = noah_windtunnel_matrix(indi_u, experiment_state_ptr, last_state_change_ptr, current_time, slider_var_1_local);
         }
 
         
-        // float time_now = get_sys_time_float();
-        // indi_u[0] = slider_var_1_local;
         // indi_u[4] = start_test_bool_local*1.0f;
 
     }
