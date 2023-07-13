@@ -292,8 +292,13 @@ int16_t start_state = 0;
     
     #define VOLTAGE_CUTOFF 15.0f
     int using_battery = 1;
+    // Low RPM experiments <900
+    // const float tilt_angles[15] = {20.0f, 10.0f, 0.0f, -10.0f, -20.0f, -30.0f, -40.0f, -50.0f, -60.0f, -70.0f, -80.0f, -90.0f, -100.0f, -110.0f, -120.0f};
+    
+    // High RPM experiment >900
+    const float tilt_angles[15] = {-60.0f, -70.0f, -80.0f, -90.0f, -100.0f, -110.0f, -120.0f};
 
-    const float tilt_angles[15] = {20.0f, 10.0f, 0.0f, -10.0f, -20.0f, -30.0f, -40.0f, -50.0f, -60.0f, -70.0f, -80.0f, -90.0f, -100.0f, -110.0f, -120.0f};
+    
     int experiment_state = 0;
     const int num_tilt_cases = (sizeof(tilt_angles) / sizeof(tilt_angles[0]));
 
