@@ -170,7 +170,7 @@
     </command_laws>
 
     <section name="MISC">
-        <define name="VoltageOfAdc(adc)"                value="((3.3f/65536.0f) * 25.46 * adc)"/> <!-- ADC calibration -->
+        <define name="VoltageOfAdc(adc)"                value="((3.3f/65536.0f) * 24.64 * adc)"/> <!-- ADC calibration -->
         <define name="ADC_CURRENT_DISABLE"              value="TRUE"/> <!-- Use current measurement trough UAVCAN -->
 
         <define name="NO_RC_THRUST_LIMIT"               value="TRUE"/>
