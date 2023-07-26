@@ -108,26 +108,34 @@
 
     <!-- Can bus 1 actuators -->
     <servos driver="Uavcan1">
-        <servo no="0" name="MOTOR_FRONT"    min="-8191" neutral="-5000" max="8191"/>
-        <servo no="1" name="MOTOR_RIGHT"    min="-8191" neutral="-5000" max="8191"/>
-        <servo no="2" name="MOTOR_BACK"     min="-8191" neutral="-5000" max="8191"/>
-        <servo no="3" name="MOTOR_LEFT"     min="-8191" neutral="-5000" max="8191"/>
-        <servo no="4" name="MOTOR_PUSH"     min="-8191" neutral="-8191" max="8191"/>
-        <servo no="5" name="SERVO_ELEVATOR" min="-8191" neutral="-8191" max="4900"/>
-        <servo no="6" name="SERVO_RUDDER"   min="-8191" neutral="0"     max="8191"/>
-        <servo no="7" name="ROTATION_MECH"  min="-8191" neutral="0"     max="8191"/>
+        <servo no="0"  name="MOTOR_FRONT"     min="-8191" neutral="-5000" max="8191"/>
+        <servo no="1"  name="MOTOR_RIGHT"     min="-8191" neutral="-5000" max="8191"/>
+        <servo no="2"  name="MOTOR_BACK"      min="-8191" neutral="-5000" max="8191"/>
+        <servo no="3"  name="MOTOR_LEFT"      min="-8191" neutral="-5000" max="8191"/>
+        <servo no="4"  name="MOTOR_PUSH"      min="-8191" neutral="-8191" max="8191"/>
+        <servo no="5"  name="SERVO_ELEVATOR"  min="-8191" neutral="-8191" max="4900"/>
+        <servo no="6"  name="SERVO_RUDDER"    min="-8191" neutral="0"     max="8191"/>
+        <servo no="7"  name="ROTATION_MECH"   min="-8191" neutral="0"     max="8191"/>
+        <servo no="8"  name="AIL_RIGHT"       min="-8191" neutral="0"     max="8191"/>
+        <servo no="9"  name="FLAP_RIGHT"      min="-8191" neutral="0"     max="8191"/>
+        <servo no="10" name="AIL_LEFT"        min="-8191" neutral="0"     max="8191"/>
+        <servo no="11" name="FLAP_LEFT"       min="-8191" neutral="0"     max="8191"/>
     </servos>
 
     <!-- Can bus 2 actuators -->
     <servos driver="Uavcan2">
-        <servo no="0" name="BMOTOR_FRONT"    min="-8191" neutral="-5000" max="8191"/>
-        <servo no="1" name="BMOTOR_RIGHT"    min="-8191" neutral="-5000" max="8191"/>
-        <servo no="2" name="BMOTOR_BACK"     min="-8191" neutral="-5000" max="8191"/>
-        <servo no="3" name="BMOTOR_LEFT"     min="-8191" neutral="-5000" max="8191"/>
-        <servo no="4" name="BMOTOR_PUSH"     min="-8191" neutral="-8191" max="8191"/>
-        <servo no="5" name="BSERVO_ELEVATOR" min="-8191" neutral="-8191" max="4900"/>
-        <servo no="6" name="BSERVO_RUDDER"   min="-8191" neutral="0"     max="8191"/>
-        <servo no="7" name="BROTATION_MECH"  min="-8191" neutral="0"     max="8191"/>
+        <servo no="0"  name="BMOTOR_FRONT"    min="-8191" neutral="-5000" max="8191"/>
+        <servo no="1"  name="BMOTOR_RIGHT"    min="-8191" neutral="-5000" max="8191"/>
+        <servo no="2"  name="BMOTOR_BACK"     min="-8191" neutral="-5000" max="8191"/>
+        <servo no="3"  name="BMOTOR_LEFT"     min="-8191" neutral="-5000" max="8191"/>
+        <servo no="4"  name="BMOTOR_PUSH"     min="-8191" neutral="-8191" max="8191"/>
+        <servo no="5"  name="BSERVO_ELEVATOR" min="-8191" neutral="-8191" max="4900"/>
+        <servo no="6"  name="BSERVO_RUDDER"   min="-8191" neutral="0"     max="8191"/>
+        <servo no="7"  name="BROTATION_MECH"  min="-8191" neutral="0"     max="8191"/>
+        <servo no="8"  name="BAIL_RIGHT"      min="-8191" neutral="0"     max="8191"/>
+        <servo no="9"  name="BFLAP_RIGHT"     min="-8191" neutral="0"     max="8191"/>
+        <servo no="10" name="BAIL_LEFT"       min="-8191" neutral="0"     max="8191"/>
+        <servo no="11" name="BFLAP_LEFT"      min="-8191" neutral="0"     max="8191"/>
     </servos>
 
     <commands>
@@ -156,7 +164,11 @@
         <set servo="MOTOR_PUSH"         value="($th_hold? -9600 : actuators_pprz[6])"/>
         <set servo="SERVO_ELEVATOR"     value="0"/>
         <set servo="SERVO_RUDDER"       value="0"/>
-        <set servo="ROTATION_MECH"      value="9600"/>
+        <set servo="ROTATION_MECH"      value="rotation_cmd"/>
+        <set servo="AIL_RIGHT"          value="0"/>
+        <set servo="FLAP_RIGHT"         value="0"/>
+        <set servo="AIL_LEFT"           value="0"/>
+        <set servo="FLAP_LEFT"          value="0"/>
 
         <!-- Second bus -->
         <set servo="BMOTOR_FRONT"       value="($th_hold? -9600 : actuators_pprz[0])"/>
@@ -166,7 +178,11 @@
         <set servo="BMOTOR_PUSH"        value="($th_hold? -9600 : actuators_pprz[6])"/>
         <set servo="BSERVO_ELEVATOR"    value="0"/>
         <set servo="BSERVO_RUDDER"      value="0"/>
-        <set servo="BROTATION_MECH"     value="9600"/>
+        <set servo="BROTATION_MECH"     value="rotation_cmd"/>
+        <set servo="BAIL_RIGHT"         value="0"/>
+        <set servo="BFLAP_RIGHT"        value="0"/>
+        <set servo="BAIL_LEFT"          value="0"/>
+        <set servo="BFLAP_LEFT"         value="0"/>
     </command_laws>
 
     <section name="MISC">

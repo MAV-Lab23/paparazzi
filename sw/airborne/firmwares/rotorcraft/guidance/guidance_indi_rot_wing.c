@@ -206,6 +206,8 @@ float rot_wing_min_pitch_limit_deg = -20.;
 
 float airspeed_turn_lower_bound = 10.;
 
+int16_t rotation_cmd = 9600; // Quad mode
+
 void guidance_indi_propagate_filters(void);
 static void guidance_indi_calcg_rot_wing(struct FloatVect3 a_diff);
 static float guidance_indi_get_liftd(void);

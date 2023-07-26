@@ -90,5 +90,6 @@ extern float pusher_priority_factor;
 
 extern float horizontal_accel_weight;
 extern float vertical_accel_weight;
+extern int16_t rotation_cmd;
 
 #endif /* GUIDANCE_INDI_ROT_WING_H */
