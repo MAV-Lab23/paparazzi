@@ -78,8 +78,9 @@ struct rot_wing_eff_sched_var_t eff_sched_var;
 #include "modules/datalink/telemetry.h"
 static void send_rot_wing_controller(struct transport_tx *trans, struct link_device *dev)
 {
+  float angle = eff_sched_var.wing_rotation_rad / M_PI * 180.f;
   pprz_msg_send_ROT_WING_CONTROLLER(trans, dev, AC_ID,
-                          &eff_sched_var.wing_rotation_rad,
+                          &angle,
                           0,
                           0,
                           0);
