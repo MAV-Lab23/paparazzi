@@ -35,21 +35,9 @@
 #define UAVCAN_ACTUATORS_USE_CURRENT TRUE
 #endif
 
-/* uavcan ESC status telemetry structure */
-struct actuators_uavcan_telem_t {
-  bool set;
-  float voltage;
-  float current;
-  float temperature;
-  float temperature_dev;
-  int32_t rpm;
-  uint32_t energy;
-  float position;
-};
-
 #ifdef SERVOS_UAVCAN1_NB
 int16_t actuators_uavcan1_values[SERVOS_UAVCAN1_NB];
-static struct actuators_uavcan_telem_t uavcan1_telem[SERVOS_UAVCAN1_NB] = {0};
+struct actuators_uavcan_telem_t uavcan1_telem[SERVOS_UAVCAN1_NB] = {0};
 #endif
 #ifdef SERVOS_UAVCAN2_NB
 int16_t actuators_uavcan2_values[SERVOS_UAVCAN2_NB];

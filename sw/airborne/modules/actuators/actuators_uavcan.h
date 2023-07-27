@@ -25,6 +25,20 @@
 #include "modules/uavcan/uavcan.h"
 #include BOARD_CONFIG
 
+/* uavcan ESC status telemetry structure */
+struct actuators_uavcan_telem_t {
+  bool set;
+  float voltage;
+  float current;
+  float temperature;
+  float temperature_dev;
+  int32_t rpm;
+  uint32_t energy;
+  float position;
+};
+
+extern struct actuators_uavcan_telem_t uavcan1_telem[];
+
 /* External functions */
 extern void actuators_uavcan_init(struct uavcan_iface_t *iface);
 extern void actuators_uavcan_commit(struct uavcan_iface_t *iface, int16_t *values, uint8_t nb);
