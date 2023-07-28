@@ -85,7 +85,7 @@ static void send_rot_wing_controller(struct transport_tx *trans, struct link_dev
   float angle = eff_sched_var.wing_rotation_rad / M_PI * 180.f;
   pprz_msg_send_ROT_WING_CONTROLLER(trans, dev, AC_ID,
                           &angle,
-                          0,
+                          &rotation_angle_setpoint_deg,
                           0,
                           0);
 }
