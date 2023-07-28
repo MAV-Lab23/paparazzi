@@ -90,7 +90,9 @@
         <module name="stabilization" type="indi">
             <configure name="INDI_NUM_ACT" value="6"/>
         </module>
-        <module name="ctrl_eff_sched_rot_wing">
+
+        <!-- 20.17 kg -->
+        <!-- <module name="ctrl_eff_sched_rot_wing">
             <define name="ROT_WING_EFF_SCHED_IXX_BODY"          value="0.90940"/>
             <define name="ROT_WING_EFF_SCHED_IYY_BODY"          value="7.88418"/>
             <define name="ROT_WING_EFF_SCHED_IZZ"               value="5.91445"/>
@@ -99,7 +101,20 @@
             <define name="ROT_WING_EFF_SCHED_ROLL_ARM"          value="0.64"/>
             <define name="ROT_WING_EFF_SCHED_PITCH_ARM"         value="0.556"/>
             <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"    value="0.012078"/>
+        </module> -->
+        
+        <!-- 25kg -->
+        <module name="ctrl_eff_sched_rot_wing">
+            <define name="ROT_WING_EFF_SCHED_IXX_BODY"          value="0.77299"/>
+            <define name="ROT_WING_EFF_SCHED_IYY_BODY"          value="5.64572"/>
+            <define name="ROT_WING_EFF_SCHED_IZZ"               value="5.91445"/>
+            <define name="ROT_WING_EFF_SCHED_IWING"             value="1.06965"/>
+            <define name="ROT_WING_EFF_SCHED_M"                 value="25.0"/>
+            <define name="ROT_WING_EFF_SCHED_ROLL_ARM"          value="0.64"/>
+            <define name="ROT_WING_EFF_SCHED_PITCH_ARM"         value="0.556"/>
+            <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"    value="0.012078"/>
         </module>
+
         <module name="guidance" type="indi_rot_wing"/>
         <module name="nav_hybrid"/>
 
@@ -266,9 +281,16 @@
     </section>
 
     <section name="STABILIZATION_ATTITUDE_INDI" prefix="STABILIZATION_INDI_">
-        <!-- G1 and G2 -->
-        <define name="G1_ROLL"      value="{   0.0,    -8.5,     0.0,    8.5,  0.0,  0.0}"/>
+        <!-- G1 and G2 20.17 kg-->
+        <!-- <define name="G1_ROLL"      value="{   0.0,    -8.5,     0.0,    8.5,  0.0,  0.0}"/>
         <define name="G1_PITCH"     value="{  0.75,    0.0,    -0.75,    0.0,  0.0,  0.0}"/>
+        <define name="G1_YAW"       value="{ -0.25,    0.25,   -0.25,   0.25,  0.0,  0.0}"/>
+        <define name="G1_THRUST"    value="{-0.575,  -0.575,  -0.575, -0.575,  0.0,  0.0}"/>
+        <define name="G2"           value="{   0.0,     0.0,     0.0,    0.0,  0.0,  0.0}"/> -->
+
+        <!-- G1 and G2 25 kg-->
+        <define name="G1_ROLL"      value="{   0.0,  -10.0,      0.0,   10.0,  0.0,  0.0}"/>
+        <define name="G1_PITCH"     value="{   1.0,    0.0,     -1.0,    0.0,  0.0,  0.0}"/>
         <define name="G1_YAW"       value="{ -0.25,    0.25,   -0.25,   0.25,  0.0,  0.0}"/>
         <define name="G1_THRUST"    value="{-0.575,  -0.575,  -0.575, -0.575,  0.0,  0.0}"/>
         <define name="G2"           value="{   0.0,     0.0,     0.0,    0.0,  0.0,  0.0}"/>
