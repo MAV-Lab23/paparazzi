@@ -73,6 +73,10 @@ struct rot_wing_eff_sched_param_t eff_sched_p = {
 
 struct rot_wing_eff_sched_var_t eff_sched_var;
 
+float rotation_angle_setpoint_deg = 0; // Quad mode
+int16_t rotation_cmd = 9600; // Quad mode
+float pprz_angle_step = 9600. / 45.; // CMD per degree
+
 // Telemetry
 #if PERIODIC_TELEMETRY
 #include "modules/datalink/telemetry.h"
@@ -87,6 +91,7 @@ static void send_rot_wing_controller(struct transport_tx *trans, struct link_dev
 }
 #endif
 
+inline void ctrl_eff_sched_rot_wing_update_wing_angle_sp(void);
 inline void ctrl_eff_sched_rot_wing_update_wing_angle(void);
 inline void ctrl_eff_sched_rot_wing_update_MMOI(void);
 inline void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void);
@@ -122,7 +127,14 @@ void ctrl_eff_sched_rot_wing_periodic(void)
   ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness();
 }
 
-void ctrl_eff_sched_rot_wing_update_wing_angle()
+void ctrl_eff_sched_rot_wing_update_wing_angle_sp(void)
+{
+  rotation_cmd = MAX_PPRZ - (int16_t)(rotation_angle_setpoint_deg * pprz_angle_step);
+  // Calulcate rotation_cmd
+  Bound(rotation_cmd, -9600, 9600);
+}
+
+void ctrl_eff_sched_rot_wing_update_wing_angle(void)
 {
   // Get wing rotation angle from sensor
   eff_sched_var.wing_rotation_rad = 0.5 * M_PI - uavcan1_telem[7].position;

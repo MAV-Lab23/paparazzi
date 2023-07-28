@@ -26,6 +26,8 @@
 #ifndef CTRL_EFF_SCHED_ROT_WING_H
 #define CTRL_EFF_SCHED_ROT_WING_H
 
+#include "std.h"
+
 struct rot_wing_eff_sched_param_t {
   float Ixx_body;       // body MMOI around roll axis [kgm²] 
   float Iyy_body;       // body MMOI around pitch axis [kgm²] 
@@ -50,6 +52,9 @@ struct rot_wing_eff_sched_var_t {
   float pitch_motor_dMdpprz;  // derivative of delta moment with respect to a delta paparazzi command for the pitch motors [Nm/pprz]
   float roll_motor_dMdpprz;   // derivative of delta moment with respect to a delta paparazzi command for the roll motors [Nm/pprz]
 };
+
+extern float rotation_angle_setpoint_deg;
+extern int16_t rotation_cmd;
 
 extern void ctrl_eff_sched_rot_wing_init(void);
 extern void ctrl_eff_sched_rot_wing_periodic(void);
