@@ -196,9 +196,14 @@
     </command_laws>
 
     <section name="MISC">
+        <!-- Voltage and current measurements -->
         <define name="VoltageOfAdc(adc)"                value="((3.3f/65536.0f) * 24.64 * adc)"/> <!-- ADC calibration -->
-        <define name="ADC_CURRENT_DISABLE"              value="TRUE"/> <!-- Use current measurement trough UAVCAN -->
+        <define name="MilliAmpereOfAdc(adc)"            value="((3.3f/65536.0f) * 50 * adc)"/>
+        <define name="MilliAmpereOfAdc2(adc)"           value="((3.3f/65536.0f) * 50 * adc)"/>
+        <define name="ADC_CHANNEL_CURRENT2"             value="ADC_4"/>
+        <define name="UAVCAN_ACTUATORS_USE_CURRENT"     value="FALSE"/>
 
+        <!-- Others -->
         <define name="NO_RC_THRUST_LIMIT"               value="TRUE"/>
         <define name="NAV_CLIMB_VSPEED"                 value="2.0" />
         <define name="NAV_DESCEND_VSPEED"               value="-1.0"/>

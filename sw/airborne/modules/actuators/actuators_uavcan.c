@@ -187,7 +187,7 @@ static void actuators_uavcan_esc_status_cb(struct uavcan_iface_t *iface, CanardR
   telem[esc_idx].temperature = canardConvertFloat16ToNativeFloat(tmp_float);
   canardDecodeScalar(transfer, 80, 18, true, (void *)&telem[esc_idx].rpm);
 
-#ifdef UAVCAN_ACTUATORS_USE_CURRENT
+#if UAVCAN_ACTUATORS_USE_CURRENT
   // Update total current
   electrical.current = 0;
 #ifdef SERVOS_UAVCAN1_NB
