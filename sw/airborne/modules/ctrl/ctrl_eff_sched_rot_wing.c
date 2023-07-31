@@ -120,6 +120,7 @@ void ctrl_eff_sched_rot_wing_periodic(void)
 {
   // your periodic code here.
   // freq = 10.0 Hz
+  ctrl_eff_sched_rot_wing_update_wing_angle_sp();
   ctrl_eff_sched_rot_wing_update_wing_angle();
   ctrl_eff_sched_rot_wing_update_MMOI();
 
