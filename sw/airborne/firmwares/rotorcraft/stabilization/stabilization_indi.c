@@ -249,8 +249,11 @@ Butterworth2LowPass estimation_input_lowpass_filters[INDI_NUM_ACT];
 Butterworth2LowPass measurement_lowpass_filters[3];
 Butterworth2LowPass estimation_output_lowpass_filters[3];
 Butterworth2LowPass acceleration_lowpass_filter;
-static struct FirstOrderLowPass rates_filt_fo[3];
+#if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
 Butterworth2LowPass rates_filt_so[3];
+#else
+static struct FirstOrderLowPass rates_filt_fo[3];
+#endif
 
 struct FloatVect3 body_accel_f;
 
@@ -538,7 +541,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
 #endif
 #if STABILIZATION_INDI_FILTER_PITCH_RATE
 #if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
-  rates_filt.p = update_butterworth_2_low_pass(&rates_filt_so[1], body_rates->q);
+  rates_filt.q = update_butterworth_2_low_pass(&rates_filt_so[1], body_rates->q);
 #else
   rates_filt.q = update_first_order_low_pass(&rates_filt_fo[1], body_rates->q);
 #endif
@@ -547,7 +550,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
 #endif
 #if STABILIZATION_INDI_FILTER_YAW_RATE
 #if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
-  rates_filt.p = update_butterworth_2_low_pass(&rates_filt_so[2], body_rates->r);
+  rates_filt.r = update_butterworth_2_low_pass(&rates_filt_so[2], body_rates->r);
 #else
   rates_filt.r = update_first_order_low_pass(&rates_filt_fo[2], body_rates->r);
 #endif
