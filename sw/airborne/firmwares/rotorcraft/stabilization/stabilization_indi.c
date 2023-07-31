@@ -410,7 +410,7 @@ void init_filters(void)
   init_butterworth_2_low_pass(&thrust_bx_act_lowpass_filter, tau, sample_time, 0.0);
   #endif
 
-#if INDI_FILTER_RATES_SECOND_ORDER
+#if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
   tau = 1.0 / (2.0 * M_PI * STABILIZATION_INDI_FILT_CUTOFF_P);
   init_butterworth_2_low_pass(&rates_filt_so[0], tau, sample_time, 0.0);
   tau = 1.0 / (2.0 * M_PI * STABILIZATION_INDI_FILT_CUTOFF_Q);
@@ -528,7 +528,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
   //Note that due to the delay, the PD controller may need relaxed gains.
   struct FloatRates rates_filt;
 #if STABILIZATION_INDI_FILTER_ROLL_RATE
-#if INDI_FILTER_RATES_SECOND_ORDER
+#if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
   rates_filt.p = update_butterworth_2_low_pass(&rates_filt_so[0], body_rates->p);
 #else
   rates_filt.p = update_first_order_low_pass(&rates_filt_fo[0], body_rates->p);
@@ -537,7 +537,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
   rates_filt.p = body_rates->p;
 #endif
 #if STABILIZATION_INDI_FILTER_PITCH_RATE
-#if INDI_FILTER_RATES_SECOND_ORDER
+#if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
   rates_filt.p = update_butterworth_2_low_pass(&rates_filt_so[1], body_rates->q);
 #else
   rates_filt.q = update_first_order_low_pass(&rates_filt_fo[1], body_rates->q);
@@ -546,7 +546,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
   rates_filt.q = body_rates->q;
 #endif
 #if STABILIZATION_INDI_FILTER_YAW_RATE
-#if INDI_FILTER_RATES_SECOND_ORDER
+#if STABILIZATION_INDI_FILTER_RATES_SECOND_ORDER
   rates_filt.p = update_butterworth_2_low_pass(&rates_filt_so[2], body_rates->r);
 #else
   rates_filt.r = update_first_order_low_pass(&rates_filt_fo[2], body_rates->r);
