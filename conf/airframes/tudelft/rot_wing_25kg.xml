@@ -318,7 +318,7 @@
         <!-- Filters -->
         <define name="FILT_CUTOFF_P"                value="10.0"/>
         <define name="FILT_CUTOFF_Q"                value="10.0"/>
-        <define name="FILT_CUTOFF_R"                value="10.0"/>
+        <define name="FILT_CUTOFF_R"                value="5.0"/>
         <define name="FILTER_RATES_SECOND_ORDER"    value="TRUE" />
         <define name="FILT_CUTOFF"                  value="2.0"/>
         <define name="ESTIMATION_FILT_CUTOFF"       value="2.0"/>
