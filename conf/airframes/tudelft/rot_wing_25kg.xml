@@ -108,14 +108,15 @@
         
         <!-- 25kg -->
         <module name="ctrl_eff_sched_rot_wing">
-            <define name="ROT_WING_EFF_SCHED_IXX_BODY"          value="0.77299"/>
-            <define name="ROT_WING_EFF_SCHED_IYY_BODY"          value="5.64572"/>
-            <define name="ROT_WING_EFF_SCHED_IZZ"               value="5.91445"/>
-            <define name="ROT_WING_EFF_SCHED_IWING"             value="1.06965"/>
-            <define name="ROT_WING_EFF_SCHED_M"                 value="25.0"/>
-            <define name="ROT_WING_EFF_SCHED_ROLL_ARM"          value="0.64"/>
-            <define name="ROT_WING_EFF_SCHED_PITCH_ARM"         value="0.556"/>
-            <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"    value="0.012078"/>
+            <define name="ROT_WING_EFF_SCHED_IXX_BODY"              value="0.77299"/>
+            <define name="ROT_WING_EFF_SCHED_IYY_BODY"              value="5.64572"/>
+            <define name="ROT_WING_EFF_SCHED_IZZ"                   value="5.91445"/>
+            <define name="ROT_WING_EFF_SCHED_IWING"                 value="1.06965"/>
+            <define name="ROT_WING_EFF_SCHED_M"                     value="25.0"/>
+            <define name="ROT_WING_EFF_SCHED_ROLL_ARM"              value="0.64"/>
+            <define name="ROT_WING_EFF_SCHED_PITCH_ARM"             value="0.556"/>
+            <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"        value="0.012078"/>
+            <define name="ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF" value="{0.86,1.5}"/>
         </module>
 
         <module name="guidance" type="indi_rot_wing"/>

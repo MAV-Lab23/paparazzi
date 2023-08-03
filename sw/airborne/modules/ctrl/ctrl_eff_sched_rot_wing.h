@@ -29,14 +29,15 @@
 #include "std.h"
 
 struct rot_wing_eff_sched_param_t {
-  float Ixx_body;       // body MMOI around roll axis [kgm²] 
-  float Iyy_body;       // body MMOI around pitch axis [kgm²] 
-  float Izz;            // total MMOI around yaw axis [kgm²]
-  float Iwing;          // total MMOI around the spanwise direction of the wing [kgm²]
-  float m;              // mass [kg]
-  float roll_arm;       // distance from rotation point to roll motor [m]
-  float pitch_arm;      // distance from rotation point to pitch motor [m]
-  float hover_dFdpprz;  // derivative of delta force with respect to a delta paparazzi command [N/pprz]
+  float Ixx_body;                 // body MMOI around roll axis [kgm²] 
+  float Iyy_body;                 // body MMOI around pitch axis [kgm²] 
+  float Izz;                      // total MMOI around yaw axis [kgm²]
+  float Iwing;                    // total MMOI around the spanwise direction of the wing [kgm²]
+  float m;                        // mass [kg]
+  float roll_arm;                 // distance from rotation point to roll motor [m]
+  float pitch_arm;                // distance from rotation point to pitch motor [m]
+  float hover_dFdpprz;            // derivative of delta force with respect to a delta paparazzi command [N/pprz]
+  float hover_roll_pitch_coef[2]; // Model coefficients to correct pitch effective for roll motors
 };
 
 struct rot_wing_eff_sched_var_t {

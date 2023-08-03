@@ -60,15 +60,20 @@
 #error "NO ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ defined"
 #endif
 
+#ifndef ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF
+#error "NO ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF defined"
+#endif
+
 struct rot_wing_eff_sched_param_t eff_sched_p = {
-  .Ixx_body   = ROT_WING_EFF_SCHED_IXX_BODY,
-  .Iyy_body   = ROT_WING_EFF_SCHED_IYY_BODY,
-  .Izz        = ROT_WING_EFF_SCHED_IZZ,
-  .Iwing      = ROT_WING_EFF_SCHED_IWING,
-  .m          = ROT_WING_EFF_SCHED_M,
-  .roll_arm   = ROT_WING_EFF_SCHED_ROLL_ARM,
-  .pitch_arm  = ROT_WING_EFF_SCHED_PITCH_ARM,
-  .hover_dFdpprz = ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ
+  .Ixx_body                 = ROT_WING_EFF_SCHED_IXX_BODY,
+  .Iyy_body                 = ROT_WING_EFF_SCHED_IYY_BODY,
+  .Izz                      = ROT_WING_EFF_SCHED_IZZ,
+  .Iwing                    = ROT_WING_EFF_SCHED_IWING,
+  .m                        = ROT_WING_EFF_SCHED_M,
+  .roll_arm                 = ROT_WING_EFF_SCHED_ROLL_ARM,
+  .pitch_arm                = ROT_WING_EFF_SCHED_PITCH_ARM,
+  .hover_dFdpprz            = ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ,
+  .hover_roll_pitch_coef    = ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF
 };
 
 struct rot_wing_eff_sched_var_t eff_sched_var;
@@ -170,7 +175,8 @@ void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void)
   // Roll motor effectiveness
 
   float roll_motor_p_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.cosr / eff_sched_var.Ixx;
-  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr / eff_sched_var.Iyy;
+  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr *
+   (eff_sched_p.hover_roll_pitch_coef[0] + eff_sched_p.hover_roll_pitch_coef[1] * eff_sched_var.cosr2) / eff_sched_var.Iyy;
 
   // Update front pitch motor q effectiveness
   g1g2[1][0] = pitch_motor_q_eff;   // pitch effectiveness front motor
