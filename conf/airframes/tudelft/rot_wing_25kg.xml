@@ -149,6 +149,7 @@
         <servo no="9"  name="FLAP_RIGHT"      min="-8191" neutral="0"     max="8191"/>
         <servo no="10" name="AIL_LEFT"        min="-8191" neutral="0"     max="8191"/>
         <servo no="11" name="FLAP_LEFT"       min="-8191" neutral="0"     max="8191"/>
+        <servo no="12" name="PARACHUTE"       min="-8191" neutral="0"     max="8191"/>
     </servos>
 
     <!-- Can bus 2 actuators -->
@@ -165,6 +166,7 @@
         <servo no="9"  name="BFLAP_RIGHT"     min="-8191" neutral="0"     max="8191"/>
         <servo no="10" name="BAIL_LEFT"       min="-8191" neutral="0"     max="8191"/>
         <servo no="11" name="BFLAP_LEFT"      min="-8191" neutral="0"     max="8191"/>
+        <servo no="12" name="BPARACHUTE"      min="-8191" neutral="0"     max="8191"/>
     </servos>
 
     <commands>
@@ -198,6 +200,7 @@
         <set servo="FLAP_RIGHT"         value="0"/>
         <set servo="AIL_LEFT"           value="0"/>
         <set servo="FLAP_LEFT"          value="0"/>
+        <set servo="PARACHUTE"          value="RadioControlValues(RADIO_AUX6)"/>
 
         <!-- Second bus -->
         <set servo="BMOTOR_FRONT"       value="($th_hold? -9600 : actuators_pprz[0])"/>
@@ -212,6 +215,7 @@
         <set servo="BFLAP_RIGHT"        value="0"/>
         <set servo="BAIL_LEFT"          value="0"/>
         <set servo="BFLAP_LEFT"         value="0"/>
+        <set servo="BPARACHUTE"         value="RadioControlValues(RADIO_AUX6)"/>
     </command_laws>
 
     <section name="MISC">
