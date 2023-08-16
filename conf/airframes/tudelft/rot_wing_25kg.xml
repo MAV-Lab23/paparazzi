@@ -115,7 +115,7 @@
             <define name="ROT_WING_EFF_SCHED_M"                     value="25.0"/>
             <define name="ROT_WING_EFF_SCHED_ROLL_ARM"              value="0.64"/>
             <define name="ROT_WING_EFF_SCHED_PITCH_ARM"             value="0.556"/>
-            <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"        value="0.012078"/>
+            <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"        value="0.014007"/>
             <define name="ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF" value="{0.86,1.5}"/>
         </module>
 
@@ -292,9 +292,9 @@
         <define name="G2"           value="{   0.0,     0.0,     0.0,    0.0,  0.0,  0.0}"/> -->
 
         <!-- G1 and G2 25 kg-->
-        <define name="G1_ROLL"      value="{   0.0,  -10.0,      0.0,   10.0,  0.0,  0.0}"/>
-        <define name="G1_PITCH"     value="{   1.0,    0.0,     -1.0,    0.0,  0.0,  0.0}"/>
-        <define name="G1_YAW"       value="{ -0.25,    0.25,   -0.25,   0.25,  0.0,  0.0}"/>
+        <define name="G1_ROLL"      value="{   0.0,  -11.6,      0.0,   11.6,  0.0,  0.0}"/>
+        <define name="G1_PITCH"     value="{   1.16,    0.0,     -1.16,    0.0,  0.0,  0.0}"/>
+        <define name="G1_YAW"       value="{ -0.29,    0.29,   -0.29,   0.29,  0.0,  0.0}"/>
         <define name="G1_THRUST"    value="{-0.575,  -0.575,  -0.575, -0.575,  0.0,  0.0}"/>
         <define name="G2"           value="{   0.0,     0.0,     0.0,    0.0,  0.0,  0.0}"/>
 
