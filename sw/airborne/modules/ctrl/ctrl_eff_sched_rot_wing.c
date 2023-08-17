@@ -130,7 +130,7 @@ void ctrl_eff_sched_rot_wing_periodic(void)
   ctrl_eff_sched_rot_wing_update_MMOI();
 
   // Update the effectiveness values
-  ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness();
+  //ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness();
 }
 
 void ctrl_eff_sched_rot_wing_update_wing_angle_sp(void)
