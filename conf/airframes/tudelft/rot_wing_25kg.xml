@@ -301,7 +301,7 @@
         <define name="G1_ROLL"      value="{   0.0,    -9.0,    0.0,     9.0,  0.0,  0.0}"/>
         <define name="G1_PITCH"     value="{  1.14,     0.0,   -1.14,    0.0,  0.0,  0.0}"/>
         <define name="G1_YAW"       value="{ -0.29,    0.29,   -0.29,   0.29,  0.0,  0.0}"/>
-        <define name="G1_THRUST"    value="{-0.575,  -0.575,  -0.575, -0.575,  0.0,  0.0}"/>
+        <define name="G1_THRUST"    value="{ -0.54,   -0.54,   -0.54,  -0.54,  0.0,  0.0}"/>
         <define name="G2"           value="{   0.0,     0.0,     0.0,    0.0,  0.0,  0.0}"/>
 
         <!-- Actuator dynamics -->
