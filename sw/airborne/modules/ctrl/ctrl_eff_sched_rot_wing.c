@@ -40,8 +40,12 @@
 #error "NO ROT_WING_EFF_SCHED_IZZ defined"
 #endif
 
-#ifndef ROT_WING_EFF_SCHED_IWING
-#error "NO ROT_WING_EFF_SCHED_IWING defined"
+#ifndef ROT_WING_EFF_SCHED_IXX_WING
+#error "NO ROT_WING_EFF_SCHED_IXX_WING defined"
+#endif
+
+#ifndef ROT_WING_EFF_SCHED_IYY_WING
+#error "NO ROT_WING_EFF_SCHED_IYY_WING defined"
 #endif
 
 #ifndef ROT_WING_EFF_SCHED_M
@@ -68,7 +72,8 @@ struct rot_wing_eff_sched_param_t eff_sched_p = {
   .Ixx_body                 = ROT_WING_EFF_SCHED_IXX_BODY,
   .Iyy_body                 = ROT_WING_EFF_SCHED_IYY_BODY,
   .Izz                      = ROT_WING_EFF_SCHED_IZZ,
-  .Iwing                    = ROT_WING_EFF_SCHED_IWING,
+  .Ixx_wing                 = ROT_WING_EFF_SCHED_IXX_WING,
+  .Iyy_wing                 = ROT_WING_EFF_SCHED_IYY_WING,
   .m                        = ROT_WING_EFF_SCHED_M,
   .roll_arm                 = ROT_WING_EFF_SCHED_ROLL_ARM,
   .pitch_arm                = ROT_WING_EFF_SCHED_PITCH_ARM,
@@ -104,8 +109,8 @@ inline void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void);
 void ctrl_eff_sched_rot_wing_init(void)
 {
   // Initialize variables to quad values
-  eff_sched_var.Ixx               = eff_sched_p.Ixx_body;             
-  eff_sched_var.Iyy               = eff_sched_p.Iyy_body + eff_sched_p.Iwing;
+  eff_sched_var.Ixx               = eff_sched_p.Ixx_body + eff_sched_p.Ixx_wing;             
+  eff_sched_var.Iyy               = eff_sched_p.Iyy_body + eff_sched_p.Iyy_wing;
   eff_sched_var.wing_rotation_rad = 0;
   eff_sched_var.cosr              = 1;             
   eff_sched_var.sinr              = 0;              
@@ -130,7 +135,7 @@ void ctrl_eff_sched_rot_wing_periodic(void)
   ctrl_eff_sched_rot_wing_update_MMOI();
 
   // Update the effectiveness values
-  //ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness();
+  ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness();
 }
 
 void ctrl_eff_sched_rot_wing_update_wing_angle_sp(void)
@@ -158,8 +163,8 @@ void ctrl_eff_sched_rot_wing_update_wing_angle(void)
 
 void ctrl_eff_sched_rot_wing_update_MMOI(void)
 {
-  eff_sched_var.Ixx = eff_sched_p.Ixx_body + eff_sched_var.sinr2 * eff_sched_p.Iwing;
-  eff_sched_var.Iyy = eff_sched_p.Iyy_body + eff_sched_var.cosr2 * eff_sched_p.Iwing; 
+  eff_sched_var.Ixx = eff_sched_p.Ixx_body + eff_sched_var.cosr2 * eff_sched_p.Ixx_wing + eff_sched_var.sinr2 * eff_sched_p.Iyy_wing;
+  eff_sched_var.Iyy = eff_sched_p.Iyy_body + eff_sched_var.sinr2 * eff_sched_p.Ixx_wing + eff_sched_var.cosr2 * eff_sched_p.Iyy_wing; 
 
   // Bound inertia
   Bound(eff_sched_var.Ixx, 0.01, 100.);
@@ -175,8 +180,10 @@ void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void)
   // Roll motor effectiveness
 
   float roll_motor_p_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.cosr / eff_sched_var.Ixx;
-  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr *
-   (eff_sched_p.hover_roll_pitch_coef[0] + eff_sched_p.hover_roll_pitch_coef[1] * eff_sched_var.cosr2) / eff_sched_var.Iyy;
+  // float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr *
+  //  (eff_sched_p.hover_roll_pitch_coef[0] + eff_sched_p.hover_roll_pitch_coef[1] * eff_sched_var.cosr2) / eff_sched_var.Iyy;
+
+  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr / eff_sched_var.Iyy;
 
   // Update front pitch motor q effectiveness
   g1g2[1][0] = pitch_motor_q_eff;   // pitch effectiveness front motor
