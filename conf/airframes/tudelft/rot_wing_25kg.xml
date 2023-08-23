@@ -117,7 +117,7 @@
             <define name="ROT_WING_EFF_SCHED_ROLL_ARM"              value="0.64"/>
             <define name="ROT_WING_EFF_SCHED_PITCH_ARM"             value="0.556"/>
             <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"        value="0.014007"/>
-            <define name="ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF" value="{0.86,1.5}"/>
+            <define name="ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF" value="{2.1,1.5}"/>
         </module>
 
         <module name="guidance" type="indi_rot_wing"/>
@@ -323,13 +323,16 @@
         <define name="MAX_R"                        value="30.0" unit="deg/s"/>
 
         <!-- Filters -->
-        <define name="FILT_CUTOFF_P"                value="10.0"/>
-        <define name="FILT_CUTOFF_Q"                value="10.0"/>
-        <define name="FILT_CUTOFF_R"                value="5.0"/>
-        <define name="FILTER_RATES_SECOND_ORDER"    value="TRUE" />
-        <define name="FILT_CUTOFF"                  value="2.0"/>
-        <define name="ESTIMATION_FILT_CUTOFF"       value="2.0"/>
-        <define name="FILTER_YAW_RATE"              value="TRUE"/>
+        <define name="FILT_CUTOFF_P"                    value="10.0"/>
+        <define name="FILT_CUTOFF_Q"                    value="10.0"/>
+        <define name="FILT_CUTOFF_R"                    value="5.0"/>
+        <define name="FILTER_RATES_SECOND_ORDER"        value="TRUE" />
+        <define name="FILT_CUTOFF"                      value="2.0"/>
+        <define name="ESTIMATION_FILT_CUTOFF"           value="2.0"/>
+        <define name="FILTER_YAW_RATE"                  value="TRUE"/>
+        <define name="OUTPUT_NOTCH_FILTER"              value="TRUE"/>
+        <define name="OUTPUT_NOTCH_FILTER_CUTOFF_F"     value="6.0"/>
+        <define name="OUTPUT_NOTCH_FILTER_BANDWITDH"    value="1.0"/>
 
         <!-- Other -->
         <define name="WLS_PRIORITIES"   value="{1000, 1000, 1, 100}"/>
