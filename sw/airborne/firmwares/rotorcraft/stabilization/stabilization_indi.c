@@ -45,6 +45,7 @@
 #endif
 #include "modules/core/abi.h"
 #include "filters/low_pass_filter.h"
+#include "filters/notch_filter_float.h"
 #include "wls/wls_alloc.h"
 #include <stdio.h>
 
@@ -255,6 +256,17 @@ Butterworth2LowPass rates_filt_so[3];
 static struct FirstOrderLowPass rates_filt_fo[3];
 #endif
 
+#if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
+#ifndef STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F
+#define STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F 6.
+#endif
+#ifndef STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH
+#define STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH 1.
+#endif
+static struct SecondOrderNotchFilter actuator_notch_filters[INDI_NUM_ACT];
+float indi_u_notch_output[INDI_NUM_ACT];
+#endif
+
 struct FloatVect3 body_accel_f;
 
 void init_filters(void);
@@ -426,6 +438,13 @@ void init_filters(void)
   init_first_order_low_pass(&rates_filt_fo[0], time_constants[0], sample_time, stateGetBodyRates_f()->p);
   init_first_order_low_pass(&rates_filt_fo[1], time_constants[1], sample_time, stateGetBodyRates_f()->q);
   init_first_order_low_pass(&rates_filt_fo[2], time_constants[2], sample_time, stateGetBodyRates_f()->r);
+#endif
+
+#if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
+  for (i = 0; i < INDI_NUM_ACT; i++) {
+    notch_filter_init(&actuator_notch_filters[i], STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F, STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH, PERIODIC_FREQUENCY);
+  }
+  
 #endif
 }
 
@@ -763,6 +782,16 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     // Not in flight, so don't increment
     float_vect_copy(indi_u, indi_du, INDI_NUM_ACT);
   }
+
+  // Propagate output_notch_filter if using this filter
+  #if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
+    for (i = 0; i < INDI_NUM_ACT; i++) {
+      notch_filter_update(&actuator_notch_filters[i], &indi_u[i], &indi_u_notch_output[i]);
+      // Copy notch filter output
+      printf("TEST\n");
+      indi_u[i] = indi_u_notch_output[i];
+    }
+  #endif
 
   // Bound the inputs to the actuators
   for (i = 0; i < INDI_NUM_ACT; i++) {
