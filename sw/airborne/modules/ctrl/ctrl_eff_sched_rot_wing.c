@@ -115,7 +115,8 @@ void ctrl_eff_sched_rot_wing_init(void)
   eff_sched_var.cosr              = 1;             
   eff_sched_var.sinr              = 0;              
   eff_sched_var.cosr2             = 1;              
-  eff_sched_var.sinr2             = 0;           
+  eff_sched_var.sinr2             = 0;
+  eff_sched_var.cosr3             = 1;           
 
   // Set moment derivative variables
   eff_sched_var.pitch_motor_dMdpprz = eff_sched_p.hover_dFdpprz * eff_sched_p.pitch_arm;
@@ -159,6 +160,8 @@ void ctrl_eff_sched_rot_wing_update_wing_angle(void)
 
   eff_sched_var.cosr2 = eff_sched_var.cosr * eff_sched_var.cosr;
   eff_sched_var.sinr2 = eff_sched_var.sinr * eff_sched_var.sinr;
+
+  eff_sched_var.cosr3 = eff_sched_var.cosr2 * eff_sched_var.cosr;
 }
 
 void ctrl_eff_sched_rot_wing_update_MMOI(void)
@@ -183,7 +186,7 @@ void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void)
   // float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr *
   //  (eff_sched_p.hover_roll_pitch_coef[0] + eff_sched_p.hover_roll_pitch_coef[1] * eff_sched_var.cosr2) / eff_sched_var.Iyy;
 
-  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr * eff_sched_p.hover_roll_pitch_coef[0] / eff_sched_var.Iyy;
+  float roll_motor_q_eff = (eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr / eff_sched_var.Iyy) * (eff_sched_p.hover_roll_pitch_coef[0] + eff_sched_p.hover_roll_pitch_coef[1] * eff_sched_var.cosr3);
 
   // Update front pitch motor q effectiveness
   g1g2[1][0] = pitch_motor_q_eff;   // pitch effectiveness front motor

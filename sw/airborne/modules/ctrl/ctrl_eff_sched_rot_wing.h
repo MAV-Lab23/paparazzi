@@ -49,6 +49,7 @@ struct rot_wing_eff_sched_var_t {
   float sinr;                 // sine of wing rotation angle
   float cosr2;                // cosine² of wing rotation angle
   float sinr2;                // sine² of wing rotation angle
+  float cosr3;                // cos³ of wing rotation angle
 
   // Set during initialization
   float pitch_motor_dMdpprz;  // derivative of delta moment with respect to a delta paparazzi command for the pitch motors [Nm/pprz]
