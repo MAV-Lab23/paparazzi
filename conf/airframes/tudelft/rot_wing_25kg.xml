@@ -117,7 +117,7 @@
             <define name="ROT_WING_EFF_SCHED_ROLL_ARM"              value="0.64"/>
             <define name="ROT_WING_EFF_SCHED_PITCH_ARM"             value="0.556"/>
             <define name="ROT_WING_EFF_SCHED_HOVER_DF_DPPRZ"        value="0.014007"/>
-            <define name="ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF" value="{2.1,1.5}"/>
+            <define name="ROT_WING_EFF_SCHED_HOVER_ROLL_PITCH_COEF" value="{0.88,1.22}"/>
         </module>
 
         <module name="guidance" type="indi_rot_wing"/>
