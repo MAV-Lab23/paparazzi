@@ -788,7 +788,6 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     for (i = 0; i < INDI_NUM_ACT; i++) {
       notch_filter_update(&actuator_notch_filters[i], &indi_u[i], &indi_u_notch_output[i]);
       // Copy notch filter output
-      printf("TEST\n");
       indi_u[i] = indi_u_notch_output[i];
     }
   #endif
