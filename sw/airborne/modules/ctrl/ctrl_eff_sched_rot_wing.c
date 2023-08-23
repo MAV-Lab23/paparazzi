@@ -183,7 +183,7 @@ void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void)
   // float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr *
   //  (eff_sched_p.hover_roll_pitch_coef[0] + eff_sched_p.hover_roll_pitch_coef[1] * eff_sched_var.cosr2) / eff_sched_var.Iyy;
 
-  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr / eff_sched_var.Iyy;
+  float roll_motor_q_eff = eff_sched_var.roll_motor_dMdpprz * eff_sched_var.sinr * eff_sched_p.hover_roll_pitch_coef[0] / eff_sched_var.Iyy;
 
   // Update front pitch motor q effectiveness
   g1g2[1][0] = pitch_motor_q_eff;   // pitch effectiveness front motor
