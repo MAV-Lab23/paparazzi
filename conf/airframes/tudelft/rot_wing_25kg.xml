@@ -331,8 +331,8 @@
         <define name="ESTIMATION_FILT_CUTOFF"           value="2.0"/>
         <define name="FILTER_YAW_RATE"                  value="TRUE"/>
         <define name="OUTPUT_NOTCH_FILTER"              value="TRUE"/>
-        <define name="OUTPUT_NOTCH_FILTER_CUTOFF_F"     value="6.0"/>
-        <define name="OUTPUT_NOTCH_FILTER_BANDWITDH"    value="1.0"/>
+        <define name="OUTPUT_NOTCH_FILTER_CUTOFF_F"     value="6.25"/>
+        <define name="OUTPUT_NOTCH_FILTER_BANDWITDH"    value="1.5"/>
 
         <!-- Other -->
         <define name="WLS_PRIORITIES"   value="{1000, 1000, 1, 100}"/>
