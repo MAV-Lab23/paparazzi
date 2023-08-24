@@ -260,6 +260,7 @@ static struct FirstOrderLowPass rates_filt_fo[3];
 #ifndef STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F
 #define STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F 6.
 #endif
+float stab_indi_notch_filter_freq = STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F;
 #ifndef STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH
 #define STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH 1.
 #endif
@@ -442,7 +443,7 @@ void init_filters(void)
 
 #if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
   for (i = 0; i < INDI_NUM_ACT; i++) {
-    notch_filter_init(&actuator_notch_filters[i], STABILIZITAION_INDI_OUTPUT_NOTCH_FILTER_CUTOFF_F, STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH, PERIODIC_FREQUENCY);
+    notch_filter_init(&actuator_notch_filters[i], stab_indi_notch_filter_freq, STABILIZATION_INDI_OUTPUT_NOTCH_FILTER_BANDWIDTH, PERIODIC_FREQUENCY);
   }
   
 #endif
@@ -786,6 +787,9 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
   // Propagate output_notch_filter if using this filter
   #if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
     for (i = 0; i < INDI_NUM_ACT; i++) {
+      // Update notch filter frequency in the case it is changed by a scheduler
+      notch_filter_set_filter_frequency(&actuator_notch_filters[i], stab_indi_notch_filter_freq);
+      // Update filter
       notch_filter_update(&actuator_notch_filters[i], &indi_u[i], &indi_u_notch_output[i]);
       // Copy notch filter output
       indi_u[i] = indi_u_notch_output[i];
