@@ -332,7 +332,7 @@
         <define name="FILTER_YAW_RATE"                  value="TRUE"/>
         <define name="OUTPUT_NOTCH_FILTER"              value="TRUE"/>
         <define name="OUTPUT_NOTCH_FILTER_CUTOFF_F"     value="6.5"/>
-        <define name="OUTPUT_NOTCH_FILTER_BANDWITDH"    value="2.0"/>
+        <define name="OUTPUT_NOTCH_FILTER_BANDWITDH"    value="3.0"/>
 
         <!-- Other -->
         <define name="WLS_PRIORITIES"   value="{1000, 1000, 1, 100}"/>
