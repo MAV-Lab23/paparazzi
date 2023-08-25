@@ -138,11 +138,6 @@ void ctrl_eff_sched_rot_wing_periodic(void)
 
   // Update the effectiveness values
   ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness();
-
-  // update output notch filter frequency if filter is used
-  #if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
-  ctrl_eff_sched_rot_wing_update_output_notch_freq();
-  #endif
 }
 
 void ctrl_eff_sched_rot_wing_update_wing_angle_sp(void)
@@ -207,14 +202,4 @@ void ctrl_eff_sched_rot_wing_update_hover_motor_effectiveness(void)
   // Update left motor p and q effectiveness
   g1g2[0][3] = roll_motor_p_eff;    // roll effectiveness left motor
   g1g2[1][3] = -roll_motor_q_eff;   // pitch effectiveness left motor
-}
-
-void ctrl_eff_sched_rot_wing_update_output_notch_freq(void)
-{
-  // natural frequency function 
-  //TODO: make not drone specific this is for rotating wing 25kg, make a tunable function
-  float notch_freq = 5.58 + eff_sched_var.wing_rotation_rad * 1.7;
-  Bound(notch_freq, 3., 100.);
-  // Assign notch filter frequency to value
-  stab_indi_notch_filter_freq = notch_freq;
 }
