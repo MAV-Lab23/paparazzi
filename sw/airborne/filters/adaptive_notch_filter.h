@@ -48,8 +48,6 @@ struct AdaptiveNotchFilter {
   Butterworth2LowPass lp_filter;           // Lowpass filter for the lower bound of the bandpass filter
   Butterworth2LowPass hp_filter;           // Lowpass filter for the higher bound of the bandpass filter 
 
-  float lpsig[3];                                 // history of 3 lowpass signals
-  float hpsig[3];                                 // history of 3 highpass signals
   float xband[3];                                 // Bandpassed measurement signals signals
 };
 
@@ -78,8 +76,6 @@ static inline void init_adaptive_notch_filter(struct AdaptiveNotchFilter *filter
   filter->y[0] = filter->y[1] = filter->y_est[0] = filter->y_est[1] = value;
   filter->a_est = a_ini;
 
-  filter->lpsig[0] = filter->lpsig[1] = filter->lpsig[2] = value;
-  filter->hpsig[0] = filter->hpsig[1] = filter->hpsig[2] = value;
   filter->xband[0] = filter->xband[1] = filter->xband[2] = value;
 
   // Init output notch filter
@@ -109,17 +105,9 @@ static inline void update_adaptive_notch_filter(struct AdaptiveNotchFilter *filt
   update_butterworth_2_low_pass(&filter->lp_filter, value);
   update_butterworth_2_low_pass(&filter->hp_filter, value);
 
-  filter->lpsig[2] = filter->lpsig[1];
-  filter->lpsig[1] = filter->lpsig[0];
-  filter->lpsig[0] = filter->lp_filter.o[0];
-
-  filter->hpsig[2] = filter->hpsig[1];
-  filter->hpsig[1] = filter->hpsig[0];
-  filter->hpsig[0] = value - filter->hp_filter.o[0];
-
   filter->xband[2] = filter->xband[1];   
   filter->xband[1] = filter->xband[0]; 
-  filter->xband[0] = value - filter->lpsig[0] - filter->hpsig[0]; 
+  filter->xband[0] = value - filter->lp_filter.o[0] - (value - filter->hp_filter.o[0]); 
 
   // Run output notch filter
   notch_filter_set_filter_frequency(&filter->output_n_filter, filter->a_est);
