@@ -52,12 +52,33 @@ void print_in_and_outputs(int n_c, int n_free, float** A_free_ptr, float* d, flo
 #define WLS_VERBOSE FALSE
 
 // Problem size needs to be predefined to avoid having to use VLAs
-#ifndef CA_N_V
-#error CA_N_V needs to be defined!
+#ifdef CA_N_V_INNER
+#ifdef CA_N_V_OUTER
+
+#if CA_N_V_INNER > CA_N_V_OUTER
+#define CA_N_V CA_N_V_INNER
+#else
+#define CA_N_V CA_N_V_OUTER
 #endif
 
-#ifndef CA_N_U
-#error CA_N_U needs to be defined!
+#if CA_N_U_INNER > CA_N_U_OUTER
+#define CA_N_U CA_N_U_INNER
+#else
+#define CA_N_U CA_N_U_OUTER
+#endif
+
+#else
+#define CA_N_V CA_N_V_INNER
+#define CA_N_U CA_N_U_INNER
+#endif
+
+#elif CA_N_U_OUTER
+#define CA_N_V CA_N_V_OUTER
+#define CA_N_U CA_N_U_OUTER
+#else
+
+#error CA_N_V_INNER or CA_N_V_OUTER needs to be defined!
+
 #endif
 
 #define CA_N_C  (CA_N_U+CA_N_V)
@@ -111,14 +132,12 @@ void qr_solve_wrapper(int m, int n, float** A, float* b, float* x) {
  */
 int wls_alloc(float* u, float* v, float* umin, float* umax, float** B,
     float* u_guess, float* W_init, float* Wv, float* Wu, float* up,
-    float gamma_sq, int imax) {
+    float gamma_sq, int imax,  int n_u, int n_v) {
   // allocate variables, use defaults where parameters are set to 0
   if(!gamma_sq) gamma_sq = 100000;
   if(!imax) imax = 100;
 
-  int n_c = CA_N_C;
-  int n_u = CA_N_U;
-  int n_v = CA_N_V;
+  int n_c = n_u + n_v;
 
   float A[CA_N_C][CA_N_U];
   float A_free[CA_N_C][CA_N_U];
