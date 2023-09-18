@@ -28,6 +28,10 @@
                 <define NAME="MS45XX_LOWPASS_TAU" value="0.15"/>
                 <define NAME="MS45XX_AIRSPEED_SCALE" value="2.9605"/>
                 <define NAME="USE_AIRSPEED_LOWPASS_FILTER" value="TRUE"/>
+
+                <define NAME="AIRSPEED_UAVCAN_LOWPASS_FILTER" value="TRUE" />
+                <define NAME="AIRSPEED_UAVCAN_LOWPASS_PERIOD" value="0.1" />
+                <define NAME="AIRSPEED_UAVCAN_SEND_ABI" value="0" /> <!-- Read Airspeed for logging but do not use it -->
             </module>
 
             <!-- <section name="IMU" prefix="IMU_">
