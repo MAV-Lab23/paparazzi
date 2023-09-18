@@ -575,22 +575,6 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     use_increment = 1.0;
   }
 
-  int32_t thrust_sp_qp = stabilization_cmd[COMMAND_THRUST];
-  //int32_t push_sp_qp = stabilization_cmd[COMMAND_PUSH];
-  #if !USE_NPS
-  pprz_t push_sp_qp = RadioControlValues(RADIO_AUX4);
-  #endif
-
-#ifdef EXPERIMENTAL
-#error NOT_TESTED
-  // if mode forward -> mix/swap thrust/push
-  if (guidance_h.mode == MODE_H_FORWARD) {
-    // swap
-    thrust_sp_qp = stabilization_cmd[COMMAND_PUSH] / 2;
-    push_sp_qp = stabilization_cmd[COMMAND_THRUST];
-  }
-#endif
-
   float v_thrust = 0.0;
   if (indi_thrust_increment_set) {
     v_thrust = indi_thrust_increment;
@@ -606,7 +590,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     // incremental thrust
     for (i = 0; i < INDI_NUM_ACT; i++) {
       v_thrust +=
-        (thrust_sp_qp - use_increment*actuator_state_filt_vect[i]) * Bwls[3][i];
+        (stabilization_cmd[COMMAND_THRUST] - use_increment*actuator_state_filt_vect[i]) * Bwls[3][i];
     }
   }
 
@@ -624,7 +608,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
   } else {
     // Copy radio
     #if !USE_NPS
-    actuator_thrust_bx_pprz = push_sp_qp;
+    actuator_thrust_bx_pprz = stabilization_cmd[COMMAND_PUSH];
     #else
     actuator_thrust_bx_pprz = 0;
     #endif
@@ -689,36 +673,7 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     }
 #endif
   }
-#ifdef STABILIZATION_INDI_ROTWING_V3A
-  // Right aileron lower limit calculation
 
-  float min_pprz_cmd_right_ail = -9600;
-  if (wing_rotation.wing_angle_deg < 17) {
-    min_pprz_cmd_right_ail = -1920;
-  } else if (wing_rotation.wing_angle_deg > 17 && wing_rotation.wing_angle_deg < 25) {
-    min_pprz_cmd_right_ail = -3.2 * wing_rotation.wing_angle_deg * wing_rotation.wing_angle_deg * wing_rotation.wing_angle_deg + 288. * wing_rotation.wing_angle_deg * wing_rotation.wing_angle_deg - 8771.2 * wing_rotation.wing_angle_deg + 79680;
-  }
-  Bound(min_pprz_cmd_right_ail, -9600, -1920);
-
-
-  du_min[7] = min_pprz_cmd_right_ail - use_increment*indi_u[7];
-  du_pref[4] = - use_increment*actuator_state_filt_vect[4];
-  du_pref[6] = - use_increment*actuator_state_filt_vect[6];
-  du_pref[7] = - use_increment*actuator_state_filt_vect[7];
-
-  // Schedule V3A weights
-  // indi_Wu[0] = indi_Wu_motor;
-  // indi_Wu[1] = indi_Wu_motor;
-  // indi_Wu[2] = indi_Wu_motor;
-  // indi_Wu[3] = indi_Wu_motor;
-
-  // indi_Wu[4] = indi_Wu_rudder;
-  // indi_Wu[5] = indi_Wu_elevator;
-
-  // indi_Wu[6] = indi_Wu_aileron;
-  // indi_Wu[7] = indi_Wu_aileron;
-
-#endif // STABILIZATION_INDI_ROTWING_V3A
 #ifdef STABILIZATION_INDI_ROTWING_V3B
   // Right aileron lower limit calculation
 
