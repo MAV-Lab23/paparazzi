@@ -38,7 +38,7 @@
 #include "filters/low_pass_filter.h"
 #include "modules/core/abi.h"
 #include "firmwares/rotorcraft/stabilization/stabilization_attitude_rc_setpoint.h"
-#include "wls/wls_alloc.h"
+#include "firmwares/rotorcraft/stabilization/wls/wls_alloc.h"
 
 
 // The acceleration reference is calculated with these gains. If you use GPS,
@@ -807,8 +807,11 @@ void guidance_indi_calcg_rot_wing(struct FloatVect3 a_diff) {
   Wv_rot_wing[1] = horizontal_accel_weight;
   Wv_rot_wing[2] = vertical_accel_weight;
 
+  int16_t n_u = CA_N_U_OUTER;
+  int16_t n_v = CA_N_V_OUTER;
+
   num_iter_rot_wing =
-    wls_alloc_guidance(rot_wing_du, rot_wing_v, du_min_rot_wing, du_max_rot_wing, Bwls_rot_wing, 0, 0, Wv_rot_wing, Wu_rot_wing, du_pref_rot_wing, 100000, 10);
+    wls_alloc(rot_wing_du, rot_wing_v, du_min_rot_wing, du_max_rot_wing, Bwls_rot_wing, 0, 0, Wv_rot_wing, Wu_rot_wing, du_pref_rot_wing, 100000, 10, n_u, n_v);
 }
 
 /**
