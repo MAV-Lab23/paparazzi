@@ -1,0 +1,106 @@
+/*
+ * Copyright (C) 2015 Ewoud Smeur <ewoud.smeur@gmail.com>
+ *
+ * This file is part of paparazzi.
+ *
+ * paparazzi is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * paparazzi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with paparazzi; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/**
+ * @file firmwares/rotorcraft/guidance/guidance_indi_rot_wing.h
+ *
+ * A guidance mode based on Incremental Nonlinear Dynamic Inversion
+ * Come to ICRA2016 to learn more!
+ *
+ */
+
+#ifndef GUIDANCE_INDI_ROT_WING_H
+#define GUIDANCE_INDI_ROT_WING_H
+
+#include "std.h"
+#include "math/pprz_algebra_int.h"
+#include "math/pprz_algebra_float.h"
+#include "filters/high_pass_filter.h"
+#include "firmwares/rotorcraft/guidance.h"
+#include "firmwares/rotorcraft/stabilization.h"
+
+// TODO change names for _indi_hybrid_
+
+extern void guidance_indi_init(void);
+extern void guidance_indi_enter(void);
+
+enum GuidanceIndiHybrid_HMode {
+  GUIDANCE_INDI_HYBRID_H_POS,
+  GUIDANCE_INDI_HYBRID_H_SPEED,
+  GUIDANCE_INDI_HYBRID_H_ACCEL
+};
+
+enum GuidanceIndiHybrid_VMode {
+  GUIDANCE_INDI_HYBRID_V_POS,
+  GUIDANCE_INDI_HYBRID_V_SPEED,
+  GUIDANCE_INDI_HYBRID_V_ACCEL
+};
+
+extern struct StabilizationSetpoint guidance_indi_run(struct FloatVect3 *accep_sp, float heading_sp);
+extern struct StabilizationSetpoint guidance_indi_run_mode(bool in_flight, struct HorizontalGuidance *gh, struct VerticalGuidance *gv, enum GuidanceIndiHybrid_HMode h_mode, enum GuidanceIndiHybrid_VMode v_mode);
+extern void guidance_indi_propagate_filters(void);
+
+struct guidance_indi_hybrid_params {
+  float pos_gain;
+  float pos_gainz;
+  float speed_gain;
+  float speed_gainz;
+  float heading_bank_gain;
+};
+
+extern struct guidance_indi_hybrid_params gih_params;
+extern float guidance_indi_specific_force_gain;
+extern float guidance_indi_max_airspeed;
+extern float nav_max_speed;
+extern bool take_heading_control;
+extern bool force_forward;       ///< forward flight for hybrid nav
+
+extern struct FloatRates ff_rates;
+extern bool ff_rates_set;
+
+extern float guidance_indi_max_bank;
+extern float push_first_order_constant;
+extern float hover_motor_slowdown;
+extern float a_diff_limit;
+extern float a_diff_limit_z;
+extern float rot_wing_max_pitch_limit_deg;
+extern float rot_wing_min_pitch_limit_deg;
+extern float pitch_pref_deg;
+extern float airspeed_turn_lower_bound;
+
+extern bool hover_motors_active;
+extern bool bool_disable_hover_motors;
+
+extern bool weather_vane_on;
+extern float weather_vane_gain;
+
+extern float pitch_priority_factor;
+extern float roll_priority_factor;
+extern float thrust_priority_factor;
+extern float pusher_priority_factor;
+
+extern float horizontal_accel_weight;
+extern float vertical_accel_weight;
+
+extern float climb_vspeed_fwd;
+extern float descend_vspeed_fwd;
+
+#endif /* GUIDANCE_INDI_ROT_WING_H */

@@ -1,0 +1,60 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="guidance_indi_rot_wing" dir="guidance" task="control">
+  <doc>
+    <description>
+      Guidance controller for hybrids using INDI
+    </description>
+  </doc>
+  <settings>
+    <dl_settings>
+      <dl_settings NAME="guidance_indi_hybrid">
+        <dl_setting var="weather_vane_on" min="0" step="1.0" max="1.0" shortname="wv_on"/>
+        <dl_setting var="weather_vane_gain" min="1.0" step="0.1" max="20.0" shortname="wv_gain"/>
+        <dl_setting var="hover_motors_active" min="0" step="1.0" max="1.0" shortname="hover_m_active"/>
+        <dl_setting var="bool_disable_hover_motors" min="0" step="1.0" max="1.0" shortname="hover_m_off"/>
+        <dl_setting var="pitch_priority_factor" min="0" step="1.0" max="100" shortname="pitch_weight"/>
+        <dl_setting var="pitch_pref_deg" min="-10" step="0.1" max="10" shortname="pitch_pref"/>
+        <dl_setting var="rot_wing_min_pitch_limit_deg" min="-30" step="0.1" max="0." shortname="lower pitch"/>
+        <dl_setting var="horizontal_accel_weight" min="1" step="0.1" max="30" shortname="h_accel weight"/>
+        <dl_setting var="vertical_accel_weight" min="1" step="0.1" max="30" shortname="v_accel weight"/>
+        <dl_setting var="thrust_priority_factor" min="1" step="0.1" max="60" shortname="thrust weight"/>
+        <dl_setting var="a_diff_limit" min="0.1" step="0.1" max="10.0" shortname="a_diff_limit"/>
+        <dl_setting var="a_diff_limit_z" min="0.1" step="0.1" max="10.0" shortname="a_diff_limit_z"/>
+        <dl_setting var="airspeed_turn_lower_bound" min="0.5" step="0.1" max="10" shortname="AS_lower"/>
+        <dl_setting var="push_first_order_constant" min="0" step="0.001" max="1.0" shortname="push_fo"/>
+        <dl_setting var="gih_params.pos_gain" min="0" step="0.1" max="10.0" shortname="kp" param="GUIDANCE_INDI_POS_GAIN" persistent="true"/>
+        <dl_setting var="gih_params.pos_gainz" min="0" step="0.1" max="10.0" shortname="kp_z" param="GUIDANCE_INDI_POS_GAINZ" persistent="true"/>
+        <dl_setting var="gih_params.speed_gain" min="0" step="0.1" max="10.0" shortname="kd" param="GUIDANCE_INDI_SPEED_GAIN" persistent="true"/>
+        <dl_setting var="gih_params.speed_gainz" min="0" step="0.1" max="10.0" shortname="kd_z" param="GUIDANCE_INDI_SPEED_GAINZ" persistent="true"/>
+        <dl_setting var="gih_params.heading_bank_gain" min="0" step="0.1" max="30.0" shortname="bank gain" param="GUIDANCE_INDI_HEADING_BANK_GAIN" persistent="true"/>
+        <dl_setting var="guidance_indi_max_airspeed" min="1.0" step="1.0" max="30.0" shortname="cruise_airspeed"/>
+        <dl_setting var="guidance_indi_max_bank" min="10.0" step="1.0" max="50.0" shortname="max_bank"/>
+        <dl_setting var="take_heading_control" min="0" step="1" max="1" values="OFF|ON" shortname="take_heading"/>
+        <dl_setting var="climb_vspeed_fwd" min="0.0" step="0.1" max="10.0" shortname="climb speed"/>
+        <dl_setting var="descend_vspeed_fwd" min="-10.0" step="0.1" max="0.0" shortname="descend speed"/>
+      </dl_settings>
+    </dl_settings>
+  </settings>
+  <dep>
+    <depends>@navigation,guidance_rotorcraft</depends>
+    <provides>guidance,attitude_command</provides>
+  </dep>
+  <header>
+    <file name="guidance_indi_rot_wing.h"/>
+  </header>
+  <init fun="guidance_indi_init()"/>
+  <init fun="guidance_indi_enter()"/>
+  <!--<periodic fun="guidance_indi_propagate_filters()" freq="PERIODIC_FREQUENCY" autorun="TRUE"/>-->
+  <makefile target="ap|nps" firmware="rotorcraft">
+    <file name="guidance_indi_rot_wing.c" dir="$(SRC_FIRMWARE)/guidance"/>
+    <file name="wls_alloc.c" dir="$(SRC_FIRMWARE)/guidance/wls"/>
+    <file name="qr_solve.c" dir="math/qr_solve"/>
+    <file name="r8lib_min.c" dir="math/qr_solve"/>
+    <define name="CA_N_V_GUIDANCE" value="3"/>
+    <define name="CA_N_U_GUIDANCE" value="4"/>
+    <define name="GUIDANCE_INDI_HYBRID" value="TRUE"/>
+    <define name="GUIDANCE_PID_USE_AS_DEFAULT" value="FALSE"/>
+    <define name="GUIDANCE_INDI_ROT_WING_USE_AS_DEFAULT" value="TRUE"/>
+  </makefile>
+</module>

@@ -387,6 +387,10 @@
 #define IMU_NPS_ID 23
 #endif
 
+#ifndef IMU_ICM42688_ID
+#define IMU_ICM42688_ID 24
+#endif
+
 // prefiltering with OneEuro filter
 #ifndef IMU_F1E_ID
 #define IMU_F1E_ID 30
@@ -476,6 +480,10 @@
  */
 #ifndef THRUST_INCREMENT_ID
 #define THRUST_INCREMENT_ID 1
+#endif
+
+#ifndef THRUST_BX_INCREMENT_ID
+#define THRUST_BX_INCREMENT_ID 2
 #endif
 
 #ifndef MAG_CALIB_UKF_ID
@@ -618,6 +626,14 @@
 
 #ifndef VEL_SP_FCR_ID
 #define VEL_SP_FCR_ID 1 // Approach Moving Target
+#endif
+
+/*
+ * IDs of LIFT_D senders
+ */
+
+#ifndef LIFT_D_SCHED_ID
+#define LIFT_D_SCHED_ID 1
 #endif
 
 #endif /* ABI_SENDER_IDS_H */
