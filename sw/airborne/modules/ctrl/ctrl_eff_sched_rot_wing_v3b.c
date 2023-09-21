@@ -356,6 +356,7 @@ void update_pusher_effectiveness(float *airspeed_f, float pusher_cmd_filt)
 
   Bound(eff_pusher, 0.00030, 0.0015);
   thrust_bx_eff = eff_pusher;
+  //g1g2[4][8] = eff_pusher;
   } else {
     thrust_bx_eff = STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS;
   }

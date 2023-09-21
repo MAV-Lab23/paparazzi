@@ -362,8 +362,12 @@ struct StabilizationSetpoint guidance_indi_run(struct FloatVect3 *accel_sp, floa
   // Perform WLS
   guidance_indi_calcg_rot_wing(a_diff);
 
-  AbiSendMsgTHRUST(THRUST_INCREMENT_ID, rot_wing_du[2]);
-  AbiSendMsgTHRUSTBX(THRUST_BX_INCREMENT_ID, rot_wing_du[3]);
+  struct FloatVect3 thrust_increment;
+  thrust_increment.x = rot_wing_du[3];
+  thrust_increment.y = 0.0;
+  thrust_increment.z = rot_wing_du[2];
+
+  AbiSendMsgTHRUST(THRUST_INCREMENT_ID, thrust_increment);
 
   //Coordinated turn
   //feedforward estimate angular rotation omega = g*tan(phi)/v

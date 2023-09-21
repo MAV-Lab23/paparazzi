@@ -40,9 +40,6 @@
 #include "generated/airframe.h"
 #include "modules/radio_control/radio_control.h"
 #include "modules/actuators/actuators.h"
-#ifdef STABILIZATION_INDI_ROTWING_V3A
-#include "modules/rot_wing_drone/wing_rotation_controller_v3a.h"
-#endif
 #include "modules/core/abi.h"
 #include "filters/low_pass_filter.h"
 #include "wls/wls_alloc.h"
@@ -76,6 +73,12 @@
 // the hover throttle limit.
 #ifndef INDI_HROTTLE_LIMIT_AIRSPEED_FWD
 #define INDI_HROTTLE_LIMIT_AIRSPEED_FWD 8.0
+#endif
+
+#if INDI_OUTPUTS > 4
+#ifndef STABILIZATION_INDI_G1_THRUST_X
+#error "You must define STABILIZATION_INDI_G1_THRUST_X for your number of INDI_OUTPUTS"
+#endif
 #endif
 
 float du_min[INDI_NUM_ACT];
@@ -139,34 +142,10 @@ static float Wv[INDI_OUTPUTS] = STABILIZATION_INDI_WLS_PRIORITIES;
 static float Wv[INDI_OUTPUTS] = {1000, 1000, 1, 100};
 #endif
 
-#ifdef STABILIZATION_INDI_WLS_WU_MOTOR
-float indi_Wu_motor = STABILIZATION_INDI_WLS_WU_MOTOR;
-#else
-float indi_Wu_motor = 130;
-#endif
-
-#ifdef STABILIZATION_INDI_WLS_WU_ELEVATOR
-float indi_Wu_elevator = STABILIZATION_INDI_WLS_WU_ELEVATOR;
-#else
-float indi_Wu_elevator = 100;
-#endif
-
-#ifdef STABILIZATION_INDI_WLS_WU_RUDDER
-float indi_Wu_rudder = STABILIZATION_INDI_WLS_WU_RUDDER;
-#else
-float indi_Wu_rudder = 100;
-#endif
-
-#ifdef STABILIZATION_INDI_WLS_WU_AILERON
-float indi_Wu_aileron = STABILIZATION_INDI_WLS_WU_AILERON;
-#else
-float indi_Wu_aileron = 100;
-#endif
-
 #ifdef STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS
 float thrust_bx_eff = STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS;
 #ifndef STABILIZATION_INDI_PUSHER_PROP_DYN
-#error "STABILIZATION_INDI_PUSHER_PROP_DYN should be defines is STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS is defined"
+#error "STABILIZATION_INDI_PUSHER_PROP_DYN should be defined if STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS is defined"
 #else
 float thrust_bx_state;
 float thrust_bx_act_dyn = STABILIZATION_INDI_PUSHER_PROP_DYN;
@@ -227,14 +206,9 @@ abi_event rpm_ev;
 static void rpm_cb(uint8_t sender_id, struct rpm_act_t * rpm_message, uint8_t num_act);
 
 abi_event thrust_ev;
-static void thrust_cb(uint8_t sender_id, float thrust_increment);
-float indi_thrust_increment;
+static void thrust_cb(uint8_t sender_id, struct FloatVect3 thrust_increment);
+struct FloatVect3 indi_thrust_increment;
 bool indi_thrust_increment_set = false;
-
-abi_event thrust_bx_ev;
-static void thrust_bx_cb(uint8_t sender_id, float thrust_bx_increment);
-float indi_thrust_bx_increment;
-bool indi_thrust_bx_increment_set = false;
 
 float g1g2_pseudo_inv[INDI_NUM_ACT][INDI_OUTPUTS];
 float g2[INDI_NUM_ACT] = STABILIZATION_INDI_G2; //scaled by INDI_G_SCALING
@@ -321,7 +295,6 @@ void stabilization_indi_init(void)
 
   AbiBindMsgRPM(RPM_SENSOR_ID, &rpm_ev, rpm_cb);
   AbiBindMsgTHRUST(THRUST_INCREMENT_ID, &thrust_ev, thrust_cb);
-  AbiBindMsgTHRUSTBX(THRUST_BX_INCREMENT_ID, &thrust_bx_ev, thrust_bx_cb);
 
   #ifdef STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS
   actuator_thrust_bx_pprz = -MAX_PPRZ;
@@ -423,6 +396,7 @@ void init_filters(void)
 #else
   // Init rate filter for feedback
   float time_constants[3] = {1.0 / (2 * M_PI * STABILIZATION_INDI_FILT_CUTOFF_P), 1.0 / (2 * M_PI * STABILIZATION_INDI_FILT_CUTOFF_Q), 1.0 / (2 * M_PI * STABILIZATION_INDI_FILT_CUTOFF_R)};
+
   init_first_order_low_pass(&rates_filt_fo[0], time_constants[0], sample_time, stateGetBodyRates_f()->p);
   init_first_order_low_pass(&rates_filt_fo[1], time_constants[1], sample_time, stateGetBodyRates_f()->q);
   init_first_order_low_pass(&rates_filt_fo[2], time_constants[2], sample_time, stateGetBodyRates_f()->r);
@@ -575,7 +549,10 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     use_increment = 1.0;
   }
 
-  float v_thrust = 0.0;
+  struct FloatVect3 v_thrust;
+  v_thrust.x = 0.0;
+  v_thrust.y = 0.0;
+  v_thrust.z = 0.0;
   if (indi_thrust_increment_set) {
     v_thrust = indi_thrust_increment;
 
@@ -586,35 +563,30 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     }
     stabilization_cmd[COMMAND_THRUST] /= num_thrusters;
 
+    // Calculate command
+    float du_thrust_bx = 1./thrust_bx_eff * v_thrust.x;
+    // Increment thrust_bx
+    actuator_thrust_bx_pprz = thrust_bx_state_filt + du_thrust_bx;
+    Bound(actuator_thrust_bx_pprz, 0, MAX_PPRZ);
+
   } else {
     // incremental thrust
     for (i = 0; i < INDI_NUM_ACT; i++) {
-      v_thrust +=
+      v_thrust.z +=
         (stabilization_cmd[COMMAND_THRUST] - use_increment*actuator_state_filt_vect[i]) * Bwls[3][i];
+      // Copy radio
+      #if !USE_NPS
+      actuator_thrust_bx_pprz = stabilization_cmd[COMMAND_PUSH];
+      #else
+      actuator_thrust_bx_pprz = 0;
+      #endif
     }
   }
 
   // Add pusher motor for rotating wing drone
   #ifdef STABILIZATION_INDI_PUSHER_PROP_EFFECTIVENESS
-  float v_thrust_bx = 0.0;
-  if (indi_thrust_bx_increment_set && in_flight) {
-    v_thrust_bx = indi_thrust_bx_increment;
-    // Calculate command
-    float du_thrust_bx = 1./thrust_bx_eff * v_thrust_bx;
 
-    // Increment thrust_bx
-    actuator_thrust_bx_pprz = thrust_bx_state_filt + du_thrust_bx;
-    Bound(actuator_thrust_bx_pprz, 0, MAX_PPRZ);
-  } else {
-    // Copy radio
-    #if !USE_NPS
-    actuator_thrust_bx_pprz = stabilization_cmd[COMMAND_PUSH];
-    #else
-    actuator_thrust_bx_pprz = 0;
-    #endif
-  }
-
-  actuators_pprz[INDI_NUM_ACT] = (int16_t) actuator_thrust_bx_pprz;
+  // actuators_pprz[INDI_NUM_ACT] = (int16_t) actuator_thrust_bx_pprz;
 
   // Propagate state filters
   // Get the acceleration in body axes
@@ -634,7 +606,10 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
   indi_v[0] = (angular_accel_ref.p - use_increment*angular_acceleration[0]);
   indi_v[1] = (angular_accel_ref.q - use_increment*angular_acceleration[1]);
   indi_v[2] = (angular_accel_ref.r - use_increment*angular_acceleration[2] + g2_times_du);
-  indi_v[3] = v_thrust;
+  indi_v[3] = v_thrust.z;
+  #if INDI_OUTPUTS > 4
+  indi_v[4] = v_thrust.x;
+  #endif
 
 #if STABILIZATION_INDI_ALLOCATION_PSEUDO_INVERSE
   // Calculate the increment for each actuator
@@ -778,6 +753,8 @@ void stabilization_indi_rate_run(struct FloatRates rate_sp, bool in_flight)
     actuators_pprz[i] = (int16_t) indi_u[i];
   }
 
+  actuators_pprz[8] = (int16_t) actuator_thrust_bx_pprz;
+
   // Set the stab_cmd to 42 to indicate that it is not used
   stabilization_cmd[COMMAND_ROLL] = 42;
   stabilization_cmd[COMMAND_PITCH] = 42;
@@ -840,7 +817,6 @@ void stabilization_indi_attitude_run(struct Int32Quat quat_sp, bool in_flight)
 
   // Reset thrust increment boolean
   indi_thrust_increment_set = false;
-  indi_thrust_bx_increment_set = false;
 }
 
 // This function reads rc commands
@@ -1079,19 +1055,10 @@ static void rpm_cb(uint8_t __attribute__((unused)) sender_id, struct rpm_act_t U
 /**
  * ABI callback that obtains the thrust increment from guidance INDI
  */
-static void thrust_cb(uint8_t UNUSED sender_id, float thrust_increment)
+static void thrust_cb(uint8_t UNUSED sender_id, struct FloatVect3 thrust_increment)
 {
   indi_thrust_increment = thrust_increment;
   indi_thrust_increment_set = true;
-}
-
-/**
- * ABI callback that obtains the thrust bx increment from guidance INDI
- */
-static void thrust_bx_cb(uint8_t UNUSED sender_id, float thrust_bx_increment)
-{
-  indi_thrust_bx_increment = thrust_bx_increment;
-  indi_thrust_bx_increment_set = true;
 }
 
 static void bound_g_mat(void)

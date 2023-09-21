@@ -100,7 +100,8 @@
         </module>
 
         <module TYPE="indi" NAME="stabilization">
-            <configure name="INDI_NUM_ACT" value="8"/>
+            <configure name="INDI_NUM_ACT" value="9"/>
+            <configure name="INDI_OUTPUTS" value="4"/>
         </module>
 
         <module name="guidance" type="indi_rot_wing"/>
@@ -346,9 +347,9 @@
         <define VALUE="{1.6, 0.0,   -1.6, 0.0, 0.0, 0.0}" NAME="G1_PITCH"/>
         <define VALUE="{-0.2, 0.1, -0.35, 0.35, 0.0, 0.0}" NAME="G1_YAW"/>-->
         <!--With tail effectiveness values-->
-        <define VALUE="{0.0, -15.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0}" NAME="G1_ROLL"/>
-        <define VALUE="{1.5, 0.0, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0}" NAME="G1_PITCH"/>
-        <define VALUE="{-0.3, 0.3, -0.3, 0.3, 0.0, 0.0, 0.0, 0.0}" NAME="G1_YAW"/>
+        <define VALUE="{0.0, -15.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0}" NAME="G1_ROLL"/>
+        <define VALUE="{1.5, 0.0, -1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}" NAME="G1_PITCH"/>
+        <define VALUE="{-0.3, 0.3, -0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0}" NAME="G1_YAW"/>
         <!-- <define VALUE="{-0.43, 0.43, -0.43, 0.43, 0.0, 0.0}" NAME="G1_YAW"/> -->
         <!--<define VALUE="{-0.2, 0.2, -0.2, 0.2, 0.0, 0.0}" NAME="G1_YAW"/>-->
         <!--With wing effectiveness values-->
@@ -356,7 +357,8 @@
         <define VALUE="{0.85, 0.0,   -0.97, 0.0, 0.0, 0.0}" NAME="G1_PITCH"/>
         <define VALUE="{-0.12, 0.25, -0.21, 0.25, 0.0, 0.0}" NAME="G1_YAW"/>-->
         <define VALUE="{-0.575,   -0.575,  -0.575, -0.575, 0.0, 0.0, 0.0, 0.0}" NAME="G1_THRUST"/>
-        <define VALUE="{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}" NAME="G2"/>
+        <!-- <define VALUE="{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.55}" NAME="G1_THRUST_X"/> -->
+        <define VALUE="{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}" NAME="G2"/>
         <define VALUE="0.00055" NAME="PUSHER_PROP_EFFECTIVENESS"/>
         <define VALUE="0.024" NAME="PUSHER_PROP_DYN"/>
         <!--<define VALUE="{0.00, -30.0, 0.0,   30.0}" NAME="G1_ROLL"/>
@@ -378,8 +380,8 @@
         <define VALUE="0.5" NAME="FILT_CUTOFF_RDOT"/>
         <define VALUE="2.0" NAME="ESTIMATION_FILT_CUTOFF"/>
         <define VALUE="TRUE" NAME="FILTER_YAW_RATE"/>
-        <define VALUE="{0.02, 0.02, 0.02, 0.02, 0.1, 0.1, 0.1, 0.1}" NAME="ACT_DYN"/>
-        <define VALUE="{0, 0, 0, 0, 1, 1, 1, 1}" NAME="ACT_IS_SERVO"/>
+        <define VALUE="{0.02, 0.02, 0.02, 0.02, 0.1, 0.1, 0.1, 0.1, 0.024}" NAME="ACT_DYN"/>
+        <define VALUE="{0, 0, 0, 0, 1, 1, 1, 1, 0}" NAME="ACT_IS_SERVO"/>
         <define VALUE="{1000, 1000, 1, 100}" NAME="WLS_PRIORITIES"/>
         <define VALUE="FALSE" NAME="USE_ADAPTIVE"/>
         <define VALUE="0.001" NAME="ADAPTIVE_MU"/>
@@ -387,7 +389,7 @@
     </section>
 
     <section name="IMU" prefix="IMU_">
-        <define name="ACCEL_CALIB" value="{{.abi_id=20, .calibrated={.neutral=true, .scale=true},.neutral={-6,-3,23}, .scale={{6478,36819,14396},{661,3766,1477}}}, {.abi_id=21, .calibrated={.neutral=true, .scale=true},.neutral={-63,-15,-22}, .scale={{23554,58016,33455},{4537,11839,6837}}}, {.abi_id=22, .calibrated={.neutral=true, .scale=true},.neutral={-40,-9,6}, .scale={{17919,36647,49183},{3659,7481,10067}}}}"/>
+        <!-- <define name="ACCEL_CALIB" value="{{.abi_id=20, .calibrated={.neutral=true, .scale=true},.neutral={-6,-3,23}, .scale={{6478,36819,14396},{661,3766,1477}}}, {.abi_id=21, .calibrated={.neutral=true, .scale=true},.neutral={-63,-15,-22}, .scale={{23554,58016,33455},{4537,11839,6837}}}, {.abi_id=22, .calibrated={.neutral=true, .scale=true},.neutral={-40,-9,6}, .scale={{17919,36647,49183},{3659,7481,10067}}}}"/> -->
         <define name="MAG_CALIB" value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={-14,3,42}, .scale={{17279,2209,36874},{30247,3800,64095}}}}"/>
 
         <!-- Define axis in hover frame -->

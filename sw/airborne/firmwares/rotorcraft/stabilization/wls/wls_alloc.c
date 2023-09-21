@@ -47,6 +47,7 @@
 
 void print_final_values(int n_u, int n_v, float* u, float** B, float* v, float* umin, float* umax);
 void print_in_and_outputs(int n_c, int n_free, float** A_free_ptr, float* d, float* p_free);
+void printB(float** B, uint16_t n_v, uint16_t n_u);
 
 // provide loop feedback
 #define WLS_VERBOSE FALSE
@@ -136,6 +137,8 @@ int wls_alloc(float* u, float* v, float* umin, float* umax, float** B,
   // allocate variables, use defaults where parameters are set to 0
   if(!gamma_sq) gamma_sq = 100000;
   if(!imax) imax = 100;
+
+  RunOnceEvery(500, printB(B, n_v, n_u));
 
   int n_c = n_u + n_v;
 
@@ -394,3 +397,13 @@ void print_final_values(int n_u, int n_v, float* u, float** B, float* v, float* 
 
 }
 #endif
+
+void printB(float** B, uint16_t n_v, uint16_t n_u) {
+  printf("B =\n");
+  for(int i = 0; i < n_v; i++) {
+    for (int j = 0; j < n_u; j++) {
+      printf("%f ", B[i][j]);
+    }
+    printf("\n");
+  }
+}
