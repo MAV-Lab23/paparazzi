@@ -50,9 +50,7 @@ extern float thrust_bx_state_filt;
 
 extern float act_pref[INDI_NUM_ACT];
 
-#if STABILIZATION_INDI_OUTPUT_NOTCH_FILTER
 extern float stab_indi_notch_filter_freq;
-#endif
 
 struct Indi_gains {
   struct FloatRates att;

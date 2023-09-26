@@ -330,7 +330,7 @@
         <define name="FILT_CUTOFF"                      value="2.0"/>
         <define name="ESTIMATION_FILT_CUTOFF"           value="2.0"/>
         <define name="FILTER_YAW_RATE"                  value="TRUE"/>
-        <define name="OUTPUT_NOTCH_FILTER"              value="TRUE"/>
+        <define name="OUTPUT_NOTCH_FILTER"              value="FALSE"/>
         <define name="OUTPUT_NOTCH_FILTER_CUTOFF_F"     value="6.5"/>
         <define name="OUTPUT_NOTCH_FILTER_BANDWITDH"    value="3.0"/>
 
