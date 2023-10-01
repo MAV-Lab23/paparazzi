@@ -58,7 +58,7 @@
 
 #define USE_NAV_HYBRID_MODULE
 
-#define FLY_WITH_AIRSPEED
+// #define FLY_WITH_AIRSPEED
 
 // #define USE_LAT_SPEED_FEEDBACK_IN_WP_MODE
 
@@ -66,11 +66,17 @@
 
 // #define USE_NEW_THR_ESTIMATION
 // #define USE_NEW_THR_ESTIMATION_OPTIMIZATION
-#define NEW_AOA_DEFINITION 
+
+// #define NEW_AOA_DEFINITION 
+
+#define AOA_DEFINITION_PAPER
+
 #define FILTER_AIRSPEED
 
-#define NEW_YAWRATE_REFERENCE
-#define OVERESTIMATE_LATERAL_FORCES
+// #define NEW_YAWRATE_REFERENCE
+
+// #define OVERESTIMATE_LATERAL_FORCES
+
 float overestimation_coeff = 1.4;
 
 
@@ -90,6 +96,10 @@ float overestimation_coeff = 1.4;
 // #define TEST_RASMUS_SERVO
 // float time_old = 0; 
 // float test_frequency = 0.5;
+
+float auto_test_time_start;
+int auto_test_start = 0;
+float des_Vx, des_Vy, des_Vz, des_phi, des_theta;
 
 //Array which contains all the actuator values (sent to motor and servos)
 struct overactuated_mixing_t overactuated_mixing;
@@ -555,9 +565,9 @@ float compute_yaw_rate_turn(void){
             //Compute the yaw rate for the coordinate turn:
         float yaw_rate_setpoint_turn = 0;
         #ifdef FILTER_AIRSPEED
-        float airspeed_turn = airspeed_filt.o[0];
+            float airspeed_turn = airspeed_filt.o[0];
         #else
-        float airspeed_turn = airspeed;
+            float airspeed_turn = airspeed;
         #endif
         //We are dividing by the airspeed, so a lower bound is important
         Bound(airspeed_turn,10.0,30.0);
@@ -600,15 +610,10 @@ float compute_yaw_rate_turn(void){
             feed_fwd_term_yaw = accel_vect_filt_control_rf[1]/airspeed_turn;
             feed_back_term_yaw = - K_beta * accel_y_filt_corrected;
         #else
-            yaw_rate_setpoint_turn = accel_vect_filt_control_rf[1]/airspeed_turn - K_beta * accel_y_filt_corrected;
-            feed_fwd_term_yaw = accel_vect_filt_control_rf[1]/airspeed_turn;
-            feed_back_term_yaw = - K_beta * accel_y_filt_corrected;
-            yaw_rate_setpoint_turn = yaw_rate_setpoint_turn * compute_lat_speed_multiplier(OVERACTUATED_MIXING_MIN_SPEED_TRANSITION,OVERACTUATED_MIXING_REF_SPEED_TRANSITION,airspeed);
-
             // yaw_rate_setpoint_turn = 9.81*tan(euler_vect[0])/airspeed_turn - K_beta * accel_y_filt_corrected;
-            // feed_fwd_term_yaw = 9.81*tan(euler_vect[0])/airspeed_turn;
-            // feed_back_term_yaw = - K_beta * accel_y_filt_corrected;    
-            // yaw_rate_setpoint_turn = yaw_rate_setpoint_turn * compute_lat_speed_multiplier(OVERACTUATED_MIXING_MIN_SPEED_TRANSITION,OVERACTUATED_MIXING_REF_SPEED_TRANSITION,airspeed);
+            feed_fwd_term_yaw = 9.81*tan(euler_vect[0])/airspeed_turn;
+            feed_back_term_yaw = - K_beta * accel_y_filt_corrected;    
+            yaw_rate_setpoint_turn = feed_fwd_term_yaw * compute_lat_speed_multiplier(OVERACTUATED_MIXING_MIN_SPEED_TRANSITION,OVERACTUATED_MIXING_REF_SPEED_TRANSITION,airspeed) + feed_back_term_yaw;
         #endif
         
 
@@ -1205,6 +1210,68 @@ void assign_variables(void){
         BoundAbs(flight_path_angle, M_PI/2);
     }
 
+    #ifdef AOA_DEFINITION_PAPER
+        flight_path_angle = 0.0;
+        if(airspeed > OVERACTUATED_MIXING_AIRSPEED_VALID_TH){
+            flight_path_angle = asin(-speed_vect[2]/airspeed);
+            BoundAbs(flight_path_angle, M_PI/2);
+        }
+    #endif
+
+    //Prepare cmds for auto_test: 
+    if(auto_test_start){       
+        if( get_sys_time_float() - auto_test_time_start >= 0 && get_sys_time_float() - auto_test_time_start < 2){
+            des_Vx = 0;
+            des_Vy = 0;
+            des_Vz = 0;
+            des_phi = 0;
+            des_theta = 25; 
+        }
+        else if( get_sys_time_float() - auto_test_time_start >= 2 && get_sys_time_float() - auto_test_time_start < 9){
+            des_Vx = 15;
+            des_Vy = 0;
+            des_Vz = 0;
+            des_phi = 0;
+            des_theta = 25;  
+        }
+        else if( get_sys_time_float() - auto_test_time_start >= 7 && get_sys_time_float() - auto_test_time_start < 12){
+            des_Vx = 15;
+            des_Vy = 0;
+            des_Vz = -3;
+            des_phi = 0;
+            des_theta = 25;
+        }
+        else if( get_sys_time_float() - auto_test_time_start >= 12 && get_sys_time_float() - auto_test_time_start < 15){
+            des_Vx = 15;
+            des_Vy = 0;
+            des_Vz = 0;
+            des_phi = 0;
+            des_theta = 25;
+        }
+        else if( get_sys_time_float() - auto_test_time_start >= 15 && get_sys_time_float() - auto_test_time_start < 22){
+            des_Vx = 15;
+            des_Vy = 4;
+            des_Vz = 0;
+            des_phi = 0;
+            des_theta = 25;
+        }
+        else if( get_sys_time_float() - auto_test_time_start >= 22 && get_sys_time_float() - auto_test_time_start < 26){
+            des_Vx = 15;
+            des_Vy = 0;
+            des_Vz = 0;
+            des_phi = 0;
+            des_theta = 25;
+        }
+        else{
+            des_Vx = 0;
+            des_Vy = 0;
+            des_Vz = 0;
+            des_phi = 0;
+            des_theta = 25;
+        }                
+
+    }
+
 }
 
 /**
@@ -1354,11 +1421,14 @@ void overactuated_mixing_run(void)
         // if(radio_control.values[RADIO_MODE] < 500){
         if(autopilot.mode == AP_MODE_HOVER_DIRECT){    
             waypoint_mode = 0;
+            auto_test_time_start = get_sys_time_float();
+            auto_test_start = 0;
         }
         // Waypoint reference mode
         // if(radio_control.values[RADIO_MODE] >= 500){
         if(autopilot.mode == AP_MODE_NAV){    
-            waypoint_mode = 1;
+            waypoint_mode = 0;
+            auto_test_start = 1; //Start the autonomous manoeuvre for the paper. 
         }
 
         //INIT AND BOOLEAN RESET
@@ -1459,6 +1529,12 @@ void overactuated_mixing_run(void)
         //Calculate the desired euler angles from the auxiliary joystick channels:
         manual_phi_value = MANUAL_CONTROL_MAX_CMD_ROLL_ANGLE * radio_control.values[RADIO_MANUAL_ROLL_CMD] / MAX_PPRZ;
         manual_theta_value = MANUAL_CONTROL_MAX_CMD_PITCH_ANGLE * radio_control.values[RADIO_MANUAL_PITCH_CMD] / MAX_PPRZ;
+
+        //During the start_auto_test manoeuvre, overwrite the desired phi and theta: 
+        if(auto_test_start){
+            manual_phi_value = des_phi * M_PI/180; 
+            manual_theta_value = des_theta * M_PI/180; 
+        }
 
         manual_motor_value = OVERACTUATED_MIXING_MOTOR_MIN_OMEGA;
 
@@ -1580,6 +1656,12 @@ void overactuated_mixing_run(void)
 
         }
 
+        // If we are in the auto_test_start control mode, overwrite the speed setpoints with the one dictated by the auto_test_start: 
+        if(auto_test_start){
+            speed_setpoint_control_rf[0] = des_Vx;
+            speed_setpoint_control_rf[1] = des_Vy;
+            speed_setpoint_control_rf[2] = des_Vz;
+        }
 
         //Apply saturation blocks to speed setpoints in control reference frame:
         #ifdef FLY_WITH_AIRSPEED
