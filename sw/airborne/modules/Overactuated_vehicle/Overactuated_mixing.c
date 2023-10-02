@@ -1423,12 +1423,14 @@ void overactuated_mixing_run(void)
             waypoint_mode = 0;
             auto_test_time_start = get_sys_time_float();
             auto_test_start = 0;
+            control_mode_ovc_vehicle = 2;
         }
         // Waypoint reference mode
         // if(radio_control.values[RADIO_MODE] >= 500){
         if(autopilot.mode == AP_MODE_NAV){    
             waypoint_mode = 0;
             auto_test_start = 1; //Start the autonomous manoeuvre for the paper. 
+            control_mode_ovc_vehicle = 3;
         }
 
         //INIT AND BOOLEAN RESET
@@ -1460,7 +1462,6 @@ void overactuated_mixing_run(void)
 
             INDI_engaged = 1;
             FAILSAFE_engaged = 0;
-            control_mode_ovc_vehicle = 2;
 
             //Reset actuator states position:
             indi_u[0] = 100;
