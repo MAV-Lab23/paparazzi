@@ -243,9 +243,15 @@
         <define name="MAG_CALIB"   value="{{.abi_id=5, .calibrated={.neutral=true, .scale=true},.neutral={-96,-292,-95}, .scale={{33136,8764,8709},{59233,15761,15343}}}}"/> <!-- Calibrated 't Harde 17-08-2023 -->
 
         <!-- Define axis in hover frame -->
-        <define name="BODY_TO_IMU_PHI"   value="0." unit="deg"/>
+        <define name="BODY_TO_IMU_PHI"   value="180." unit="deg"/>
         <define name="BODY_TO_IMU_THETA" value="0." unit="deg"/>
         <define name="BODY_TO_IMU_PSI"   value="0." unit="deg"/>
+    </section>
+
+    <section name="MAG_RM3100" prefix="RM3100_">
+      <define name="MAG_TO_IMU_PHI" value="-90.0"/>
+      <define name="MAG_TO_IMU_THETA" value="0.0"/>
+      <define name="MAG_TO_IMU_PSI" value="0.0"/>
     </section>
 
     <section name="STABILIZATION_ATTITUDE" prefix="STABILIZATION_ATTITUDE_">
