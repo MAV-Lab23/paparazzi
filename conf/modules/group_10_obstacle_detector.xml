@@ -1,0 +1,25 @@
+<!DOCTYPE module SYSTEM "module.dtd">
+
+<module name="group_10_obstacle_detector" dir="computer_vision">
+  <doc>
+    <description>
+    Object Detector
+    Detects an objects by finding their location on the ground plane
+    </description>
+  </doc>
+
+  <dep>
+    <depends>video_thread</depends>
+  </dep>
+
+  <header>
+    <file name="group_10_obstacle_detector.h"/>
+  </header>
+
+  <init fun="group_10_obstacle_detector_init()"/>
+  <periodic fun="group_10_obstacle_detector_periodic()" freq="10"/>
+  <makefile target="ap|nps">
+    <file name="group_10_obstacle_detector.c"/>
+  </makefile>
+</module>
+
