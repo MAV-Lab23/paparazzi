@@ -56,3 +56,4 @@
 [submodule "submodules/simulation-pipeline"]
 	path = submodules/simulation-pipeline
 	url = https://github.com/MAV-Lab23/simulation-pipeline.git
+	ignore = dirty
