@@ -1,11 +1,15 @@
 <!DOCTYPE module SYSTEM "module.dtd">
 
-<module name="group_10_obstacle_detector" dir="computer_vision">
+<module name="group_10_obstacle_detector" dir="../../../submodules/simulation-pipeline/src">
   <doc>
     <description>
     Object Detector
     Detects an objects by finding their location on the ground plane
     </description>
+    <define name="IN_PAPARAZZI" value="1" description="Whether or not code is being compiled for paparazzi"/>
+ 
+    <define name="GROUP_10_VISUAL_DETECTION_ID" value="ABI_BROADCAST" description="which VISUAL_DETECTION message to recieve for orange pole detection."/>
+    <define name="GROUP_10_FLOOR_VISUAL_DETECTION_ID" value="ABI_BROADCAST" description="which VISUAL_DETECTION message to recieve for floor detection."/>
   </doc>
 
   <dep>
@@ -19,6 +23,8 @@
   <init fun="group_10_obstacle_detector_init()"/>
   <periodic fun="group_10_obstacle_detector_periodic()" freq="10"/>
   <makefile target="ap|nps">
+    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline"/>
+    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
     <file name="group_10_obstacle_detector.c"/>
   </makefile>
 </module>

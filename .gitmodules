@@ -53,3 +53,6 @@
 [submodule "sw/ext/libcanard"]
 	path = sw/ext/libcanard
 	url = https://github.com/UAVCAN/libcanard.git
+[submodule "submodules/simulation-pipeline"]
+	path = submodules/simulation-pipeline
+	url = https://github.com/MAV-Lab23/simulation-pipeline.git
