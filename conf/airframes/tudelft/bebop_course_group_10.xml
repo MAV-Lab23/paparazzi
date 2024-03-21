@@ -46,11 +46,13 @@
       <define name="VIDEO_CAPTURE_FPS" value="10"/>
     </module>
     <module name="group_10_obstacle_detector">
+      <define name="IN_PAPARAZZI" value="1"/>
       <define name="GROUP_10_OBSTACLE_DETECTION_ID" value="50"/>
       <define name="GROUP_10_OBSTACLE_DETECTOR_CAMERA" value="front_camera"/>
       <define name="GROUP_10_OBSTACLE_DETECTOR_FPS" value="0"/>
     </module>
     <module name="group_10_avoider">
+      <define name="IN_PAPARAZZI" value="1"/>
       <define name="GROUP_10_OBSTACLE_DETECTION_ID" value="50"/>
     </module>
     <module name="video_rtp_stream">

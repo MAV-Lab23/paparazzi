@@ -249,8 +249,8 @@
     </message>
 
     <message name="GROUP_10_OBSTACLE_DETECTION" id="37">
-      <field name="x" type="int32_t"/>
-      <field name="y" type="int32_t"/>
+      <field name="x" type="float"/>
+      <field name="y" type="float"/>
     </message>
 
   </msg_class>

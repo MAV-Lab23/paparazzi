@@ -21,7 +21,6 @@
   <periodic fun="group_10_obstacle_detector_periodic()" freq="10"/>
   <makefile target="ap">
     <file name="group_10_obstacle_detector.c"/>
-    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
     
     
@@ -29,7 +28,6 @@
   </makefile>
   <makefile target="nps">
     <file name="group_10_obstacle_detector.c"/>
-    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
     
     
