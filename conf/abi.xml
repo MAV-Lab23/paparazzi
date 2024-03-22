@@ -248,6 +248,11 @@
       <field name="vel_sp" type="struct FloatVect3 *" unit="m/s"/>
     </message>
 
+    <message name="GROUP_10_OBSTACLE_DETECTION" id="37">
+      <field name="x" type="float"/>
+      <field name="y" type="float"/>
+    </message>
+
   </msg_class>
 
 </protocol>

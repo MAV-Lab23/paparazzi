@@ -2,22 +2,23 @@
 
 <module name="group_10_avoider" dir="../../../submodules/simulation-pipeline/src">
   <doc>
-    <description>Bet</description>
-    <define name="GROUP_10_VISUAL_DETECTION_ID" value="ABI_BROADCAST" description="which VISUAL_DETECTION message to recieve for orange pole detection."/>
-    <define name="IN_PAPARAZZI" value="1" description="Whether or not code is being compiled for paparazzi"/>
+    <description></description>
+    <define name="IN_PAPARAZZI" value="1" description=""/>
+    <define name="GROUP_10_OBSTACLE_DETECTION_ID" value="50" description=""/>
   </doc>
   
   <dep>
     <depends>group_10_obstacle_detector</depends>
   </dep>
+  
   <header>
     <file name="group_10_avoider.h"/>
   </header>
   <init fun="group_10_avoider_init()"/>
-  <periodic fun="group_10_avoider_periodic()" freq="50"/>
+  <periodic fun="group_10_avoider_periodic()" freq="4"/>
   <makefile target="ap|nps">
+    <file name="group_10_avoider.c"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
-    <file name="group_10_avoider.c"/>
   </makefile>
 </module>
