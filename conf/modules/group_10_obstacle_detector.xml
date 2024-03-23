@@ -22,9 +22,13 @@
   <periodic fun="group_10_obstacle_detector_periodic()" freq="10"/>
   <makefile target="ap">
     <file name="group_10_obstacle_detector.c"/>
+    
+    <file name="opencv_wrapper.cpp"/>
+    <file name="opencv_image_functions.cpp"/>
+
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
     
-    <!--
+    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/sw/airborne/modules/computer_vision"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/sw/ext/opencv_bebop/install_arm/include"/>
     <flag name="LDFLAGS" value="L$(PAPARAZZI_HOME)/sw/ext/opencv_bebop/install_arm/lib"/>
     <flag name="LDFLAGS" value="lopencv_world"/>
@@ -40,15 +44,21 @@
     <flag name="LDFLAGS" value="lm"/>
     <flag name="LDFLAGS" value="lpthread"/>
     <flag name="LDFLAGS" value="lrt"/>
-    -->
     
     
   </makefile>
   <makefile target="nps">
     <file name="group_10_obstacle_detector.c"/>
+    
+    <!--
+    <file name="opencv_wrapper.cpp"/>
+    <file name="opencv_image_functions.cpp"/>
+    -->
+
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
     
     <!--
+    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/sw/airborne/modules/computer_vision"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/sw/ext/opencv_bebop/install_pc/include"/>
     <flag name="LDFLAGS" value="L$(PAPARAZZI_HOME)/sw/ext/opencv_bebop/install_pc/lib"/>
     <flag name="LDFLAGS" value="lopencv_world"/>
@@ -70,7 +80,7 @@
     <flag name="LDFLAGS" value="lharfbuzz"/>
     <flag name="LDFLAGS" value="lrt"/>
     -->
-    
+
   </makefile>
 </module>
 
