@@ -27,10 +27,15 @@
 #define VIDEO_CAPTURE_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 // Module settings
 extern bool video_capture_take_shot;
 extern bool video_capture_record_video;
+
+extern void custom_logger_file_start(void);
+extern void custom_logger_file_stop(void);
+extern void custom_logger_file_periodic(uint32_t image_timestamp);
 
 // Module functions
 extern void video_capture_init(void);

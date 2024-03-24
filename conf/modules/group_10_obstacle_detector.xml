@@ -4,7 +4,7 @@
   <doc>
     <description></description>
     <define name="IN_PAPARAZZI" value="1" description=""/>
-    <!--<define name="GROUP_10_OPENCV" value="1" description=""/>-->
+    <define name="GROUP_10_OPENCV" value="1" description=""/>
     <define name="GROUP_10_OBSTACLE_DETECTION_ID" value="50" description=""/>
     <define name="GROUP_10_OBSTACLE_DETECTOR_CAMERA" value="front_camera" description=""/>
     <define name="GROUP_10_OBSTACLE_DETECTOR_FPS" value="0" description="Desired FPS (0: camera rate)"/>
@@ -50,14 +50,11 @@
   <makefile target="nps">
     <file name="group_10_obstacle_detector.c"/>
     
-    <!--
     <file name="opencv_wrapper.cpp"/>
     <file name="opencv_image_functions.cpp"/>
-    -->
 
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
     
-    <!--
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/sw/airborne/modules/computer_vision"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/sw/ext/opencv_bebop/install_pc/include"/>
     <flag name="LDFLAGS" value="L$(PAPARAZZI_HOME)/sw/ext/opencv_bebop/install_pc/lib"/>
@@ -79,7 +76,6 @@
     <flag name="LDFLAGS" value="lfreetype"/>
     <flag name="LDFLAGS" value="lharfbuzz"/>
     <flag name="LDFLAGS" value="lrt"/>
-    -->
 
   </makefile>
 </module>
