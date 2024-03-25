@@ -16,9 +16,16 @@
   </header>
   <init fun="group_10_avoider_init()"/>
   <periodic fun="group_10_avoider_periodic()" freq="4"/>
-  <makefile target="ap|nps">
+  <makefile target="ap">
+    <define name="IN_REAL_LIFE" value="1" description=""/>
     <file name="group_10_avoider.c"/>
-    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline"/>
     <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
   </makefile>
+  <makefile target="nps">
+    <define name="IN_REAL_LIFE" value="0" description=""/>
+    <file name="group_10_avoider.c"/>
+    <flag name="CXXFLAGS" value="I$(PAPARAZZI_SRC)/submodules/simulation-pipeline/src"/>
+  </makefile>
+
+
 </module>

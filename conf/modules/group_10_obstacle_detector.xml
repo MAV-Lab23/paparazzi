@@ -21,6 +21,8 @@
   <init fun="group_10_obstacle_detector_init()"/>
   <periodic fun="group_10_obstacle_detector_periodic()" freq="10"/>
   <makefile target="ap">
+    <define name="IN_REAL_LIFE" value="1" description=""/>
+
     <file name="group_10_obstacle_detector.c"/>
     
     <file name="opencv_wrapper.cpp"/>
@@ -48,6 +50,8 @@
     
   </makefile>
   <makefile target="nps">
+    <define name="IN_REAL_LIFE" value="0" description=""/>
+    
     <file name="group_10_obstacle_detector.c"/>
     
     <file name="opencv_wrapper.cpp"/>
