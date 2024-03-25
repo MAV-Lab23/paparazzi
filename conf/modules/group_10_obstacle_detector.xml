@@ -4,7 +4,7 @@
   <doc>
     <description></description>
     <define name="IN_PAPARAZZI" value="1" description=""/>
-    <define name="GROUP_10_OPENCV" value="1" description=""/>
+    <define name="GROUP_10_OPENCV" value="0" description=""/>
     <define name="GROUP_10_OBSTACLE_DETECTION_ID" value="50" description=""/>
     <define name="GROUP_10_OBSTACLE_DETECTOR_CAMERA" value="front_camera" description=""/>
     <define name="GROUP_10_OBSTACLE_DETECTOR_FPS" value="0" description="Desired FPS (0: camera rate)"/>
