@@ -4,6 +4,10 @@
 
 *.so
 *.[oa]
+.vscode/*
+.vscode/
+.vscode
+vscode
 *.out
 
 *~
