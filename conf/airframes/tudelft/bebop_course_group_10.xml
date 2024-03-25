@@ -99,7 +99,7 @@
     <define name="OUTPUT_WIDTH" value="240" />
     <define name="OFFSET_X" value="0.09" />
     <define name="OFFSET_Y" value="0.00" />
-    <define name="ZOOM" value="1.25"/>
+    <define name="ZOOM" value="1.0"/>
     <define name="GAIN_GREEN1" value="10.0"/>
     <define name="GAIN_GREEN2" value="10.0"/>
     <define name="GAIN_BLUE" value="12.5"/>
