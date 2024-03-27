@@ -9,6 +9,7 @@
 .vscode
 vscode
 *.out
+[Ii]mages
 
 *~
 *.swp
