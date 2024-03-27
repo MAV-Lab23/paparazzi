@@ -47,6 +47,7 @@
       <define name="VIDEO_CAPTURE_FPS" value="10"/>
     </module>
     <module name="group_10_obstacle_detector">
+      <define name="GROUP_10_OPENCV" value="1"/>
       <define name="IN_PAPARAZZI" value="1"/>
       <define name="GROUP_10_OBSTACLE_DETECTION_ID" value="50"/>
       <define name="GROUP_10_OBSTACLE_DETECTOR_CAMERA" value="front_camera"/>
