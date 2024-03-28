@@ -7,11 +7,13 @@
 
   <firmware name="rotorcraft">
     <target name="ap" board="bebop">
+      <define name="IN_REAL_LIFE" value="1" description=""/>
       <define name="VIDEO_CAPTURE_PATH" value="/data/ftp/internal_000/images"/>
       <define name="LOGGER_FILE_PATH" value="/data/ftp/internal_000/log"/>
       <define name="MT9V117_TARGET_FPS" value="20"/>
     </target>
     <target name="nps" board="pc">
+    <define name="IN_REAL_LIFE" value="0" description=""/>
       <module name="fdm" type="gazebo"/>
       <define name="VIDEO_CAPTURE_PATH" value="/tmp/paparazzi/images"/>
       <define name="LOGGER_FILE_PATH" value="/tmp/paparazzi/log"/>
