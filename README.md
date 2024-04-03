@@ -1,3 +1,19 @@
+# NOTE TO COURSE ORGANIZERS
+
+Since our simulation environment was programmed to work both offboard the drone and in Paparazzi, it is implemented as a submodule. See the update-to-date code in the [simulation-pipeline](https://github.com/MAV-Lab23/simulation-pipeline) repository.
+This means that before running Paparazzi, it is critical to ensure that the submodule has been initialized, cloned locally, and updated on your computer. You can check if this is the case by seeing if the submodules/simulation-pipeline directory contains any files: it should. You can initialize and update the submodule by running the following command in a terminal that has been navigated to the root directory of this repository (paparazzi fork).
+```
+git submodule update --remote --force submodules/simulation-pipeline
+```
+If the command does not work try the following:
+```
+git submodule init
+git submodule update submodules/simulation-pipeline
+```
+Alternatively, you can simply clone the [simulation-pipeline](https://github.com/MAV-Lab23/simulation-pipeline) repository to your local machine into the directory submodules/simulation-pipeline of this repository.
+
+Contact [@martinstarkov](https://github.com/martinstarkov/) by emailing *M.Starkov@student.tudelft.nl* if you have trouble getting the submodules to work.
+
 # MAIN README
 
 Paparazzi UAS
