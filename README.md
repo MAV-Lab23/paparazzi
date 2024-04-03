@@ -12,6 +12,8 @@ git submodule update submodules/simulation-pipeline
 ```
 Alternatively, you can simply clone the [simulation-pipeline](https://github.com/MAV-Lab23/simulation-pipeline) repository to your local machine into the directory submodules/simulation-pipeline of this repository.
 
+Our code uses opencv_bebop and hence requires running in Ubuntu 20.04 (not 22.04!).
+
 Contact [@martinstarkov](https://github.com/martinstarkov/) by emailing *M.Starkov@student.tudelft.nl* if you have trouble getting the submodules to work.
 
 # MAIN README
