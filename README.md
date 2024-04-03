@@ -14,6 +14,8 @@ Alternatively, you can simply clone the [simulation-pipeline](https://github.com
 
 Our code uses opencv_bebop and hence requires running in Ubuntu 20.04 (not 22.04!).
 
+All files and modules relating to the obstacle detection and avoidance algorithm can be found by searching for "group_10" in this repository.
+
 Contact [@martinstarkov](https://github.com/martinstarkov/) by emailing *M.Starkov@student.tudelft.nl* if you have trouble getting the submodules to work.
 
 # MAIN README
